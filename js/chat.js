@@ -22,7 +22,7 @@
     panel.removeAttribute("hidden");
     if (dock) dock.classList.add("open");
     if (!log.childElementCount) {
-      addBubble("bot", "Hey — I'm Grok. I have Zhejian's public resume. Paste a job description and ask if it's a good fit, or ask about his work.");
+      addBubble("bot", "Hey — I'm Jazzik. I have Zhejian's public resume. Paste a job description and ask if it's a good fit, or ask about his work.");
     }
     input.focus();
   }
@@ -129,7 +129,7 @@
 
   async function ask() {
     if (!proxy) {
-      setStatus("Grok is wired up, but the server proxy is not deployed yet. That keeps the API key off this public GitHub Pages site.");
+      setStatus("Chat is not connected yet.");
       return;
     }
     busy = true;
@@ -187,7 +187,7 @@
         messages.push({ role: "assistant", content: text });
       }
     } catch (err) {
-      setBubble(bot, "bot", "Something went wrong talking to Grok.");
+      setBubble(bot, "bot", "Something went wrong. Try again in a moment.");
       setStatus(String(err.message || err));
     } finally {
       busy = false;
