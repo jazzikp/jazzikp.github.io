@@ -153,17 +153,22 @@ a { color: var(--accent); text-underline-offset: 3px; }
   margin: 0 0 20px;
 }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.socials {
-  margin: 16px 0 0;
-  font-family: var(--font-sans);
-  font-size: 14px;
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0 0;
 }
-.socials a {
-  color: var(--muted);
-  text-decoration: none;
-  margin-right: 16px;
+.social-icons a {
+  color: var(--ink);
+  display: inline-flex;
+  line-height: 0;
 }
-.socials a:hover { color: var(--accent); }
+.social-icons a:hover { color: var(--accent); }
+.social-icons svg {
+  width: 22px;
+  height: 22px;
+}
 .hero-art img {
   width: 100%;
   max-width: 280px;

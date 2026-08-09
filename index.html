@@ -15,12 +15,7 @@ layout: default
                 <a class="btn ghost" href="{{ site.baseurl }}/about/">About</a>
                 <button class="btn ghost" type="button" data-open-chat>Ask Grok</button>
             </div>
-            <p class="socials">
-                <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">GitHub</a>
-                <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}/" target="_blank" rel="noopener">LinkedIn</a>
-                <a href="https://x.com/{{ site.twitter_username }}" target="_blank" rel="noopener">X</a>
-                <a href="https://www.instagram.com/{{ site.instagram_username }}/" target="_blank" rel="noopener">Instagram</a>
-            </p>
+            {% include socials.html %}
         </div>
         <div class="hero-art">
             <img src="{{ site.baseurl }}/img/hero-anime.jpg" alt="Portrait of Zhejian Peng">
