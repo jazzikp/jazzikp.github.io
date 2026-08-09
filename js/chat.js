@@ -20,7 +20,7 @@
     panel.classList.add("open");
     panel.removeAttribute("hidden");
     if (!log.childElementCount) {
-      addBubble("bot", "Hey — I'm Grok. Ask about Zhejian's work, ranking systems, or anything else.");
+      addBubble("bot", "Hey — I'm Grok. I have Zhejian's public resume. Paste a job description and ask if it's a good fit, or ask about his work.");
     }
     input.focus();
   }
