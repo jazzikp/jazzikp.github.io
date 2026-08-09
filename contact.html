@@ -1,0 +1,51 @@
+---
+layout: page
+title: Contact
+description: Hello is free. A written consult is paid.
+eyebrow: Work with me
+permalink: /contact/
+---
+<div class="contact-grid">
+    <section class="consult-card">
+        <p class="eyebrow">Paid consult</p>
+        <h2>Submit a technical question</h2>
+        <p>Written answer on ranking, recommendation, ads ML, or coding RL. I read the question myself. No calls unless we agree later.</p>
+        <ul class="consult-meta">
+            {% if site.consult.price != "" %}
+            <li><strong>Fee</strong> {{ site.consult.price }}</li>
+            {% endif %}
+            <li><strong>Turnaround</strong> {{ site.consult.turnaround }}</li>
+            <li><strong>Topics</strong> {{ site.consult.topics }}</li>
+        </ul>
+
+        {% if site.consult.tally_embed != "" %}
+        <iframe class="tally-frame" src="{{ site.consult.tally_embed }}" title="Paid consult form" loading="lazy"></iframe>
+        {% elsif site.consult.checkout_url != "" %}
+        <a class="btn primary" href="{{ site.consult.checkout_url }}" target="_blank" rel="noopener">Pay and submit a question</a>
+        <p class="fine">Checkout is handled by Stripe or Lemon Squeezy. I never see your card.</p>
+        {% else %}
+        <form class="consult-form" action="mailto:{{ site.email }}" method="get" enctype="text/plain">
+            <input type="hidden" name="subject" value="Paid consult request">
+            <label>Your email
+                <input type="email" name="email" required placeholder="you@company.com">
+            </label>
+            <label>Question
+                <textarea name="body" required rows="6" placeholder="What are you trying to ship, and where is it stuck?"></textarea>
+            </label>
+            <button class="btn primary" type="submit">Email a consult request</button>
+            <p class="fine">Payment link is not live yet. This sends a request to {{ site.email }}. Add a Tally or Stripe URL in <code>_config.yml</code> to charge before the question lands.</p>
+        </form>
+        {% endif %}
+    </section>
+
+    <section class="hello-card">
+        <p class="eyebrow">Say hello</p>
+        <h2>Not a paid question</h2>
+        <p>Recruiting, speaking, or a short note. No invoice.</p>
+        <p><a class="btn ghost" href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+        <p class="fine">
+            <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}/">LinkedIn</a>
+            · <a href="https://x.com/{{ site.twitter_username }}">X</a>
+        </p>
+    </section>
+</div>

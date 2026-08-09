@@ -29,12 +29,35 @@ youtube_username: channel/UCR7ohymZdzclHCyr6YZW9vQ
 # Build settings
 permalink: pretty
 paginate: 10
-exclude: ["less", "node_modules", "Gruntfile.js", "package.json", "README.md", "vendor", "Gemfile", "Gemfile.lock", "workers"]
+exclude: ["less", "node_modules", "Gruntfile.js", "package.json", "README.md", "vendor", "Gemfile", "Gemfile.lock", "workers", "scripts"]
 anchorjs: true
 
 
 # Gems
 plugins: [jekyll-paginate]
+
+collections:
+  reports:
+    output: true
+    permalink: /reports/:name/
+
+defaults:
+  - scope:
+      path: ""
+      type: reports
+    values:
+      layout: report
+      author: Zhejian Peng
+
+# Paid consult — GitHub Pages cannot take cards itself.
+# Best: Tally form with Stripe, or a Stripe / Lemon Squeezy checkout link.
+consult:
+  enabled: true
+  price: ""
+  turnaround: "3–5 days"
+  topics: "ranking, recsys, ads ML, Grok / coding RL"
+  checkout_url: ""
+  tally_embed: ""
 
 
 # Markdown settings

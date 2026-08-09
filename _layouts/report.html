@@ -1,0 +1,22 @@
+---
+layout: default
+---
+<article>
+    <header class="post-hero">
+        <div class="wrap">
+            <p class="eyebrow">Technical report</p>
+            <h1>{{ page.title }}</h1>
+            {% if page.subtitle %}<p class="sub">{{ page.subtitle }}</p>{% endif %}
+            <p class="meta">
+                {% if page.date %}{{ page.date | date: "%B %-d, %Y" }} · {% endif %}
+                {% if page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}
+                {% if page.status == "draft" %} · Draft{% endif %}
+            </p>
+        </div>
+    </header>
+    <div class="wrap">
+        <div class="prose post-container">
+            {{ content }}
+        </div>
+    </div>
+</article>
