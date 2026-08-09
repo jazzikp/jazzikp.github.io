@@ -716,9 +716,10 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 
 .contact-grid {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
+  grid-template-columns: 1fr;
   gap: 20px;
   padding: 8px 0 72px;
+  max-width: 560px;
 }
 .consult-card, .hello-card {
   border: 1px solid var(--line);
