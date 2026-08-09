@@ -15,10 +15,12 @@
   var proxy = (window.GROK_PROXY || "").replace(/\/$/, "");
   var messages = [];
   var busy = false;
+  var dock = document.querySelector(".chat-dock");
 
   function openChat() {
     panel.classList.add("open");
     panel.removeAttribute("hidden");
+    if (dock) dock.classList.add("open");
     if (!log.childElementCount) {
       addBubble("bot", "Hey — I'm Grok. I have Zhejian's public resume. Paste a job description and ask if it's a good fit, or ask about his work.");
     }
@@ -27,6 +29,7 @@
 
   function closeChat() {
     panel.classList.remove("open");
+    if (dock) dock.classList.remove("open");
   }
 
   document.querySelectorAll("[data-open-chat]").forEach(function (el) {
