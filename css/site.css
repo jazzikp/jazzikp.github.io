@@ -155,19 +155,26 @@ a { color: var(--accent); text-underline-offset: 3px; }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .social-icons {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   margin: 18px 0 0;
 }
 .social-icons a {
   color: var(--ink);
   display: inline-flex;
-  line-height: 0;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
 }
 .social-icons a:hover { color: var(--accent); }
 .social-icons svg {
-  width: 22px;
-  height: 22px;
+  width: 22px !important;
+  height: 22px !important;
+  max-width: 22px;
+  max-height: 22px;
+  display: block;
 }
 .hero-art img {
   width: 100%;
