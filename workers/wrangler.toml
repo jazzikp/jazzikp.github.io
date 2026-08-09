@@ -1,6 +1,7 @@
 name = "zhejian-grok-proxy"
 main = "grok-proxy.js"
 compatibility_date = "2026-08-01"
+workers_dev = true
 
 [vars]
 # Set the secret separately:

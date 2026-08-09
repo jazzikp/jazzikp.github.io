@@ -95,7 +95,7 @@ service-worker: false
 # Grok chat — proxy keeps the API key off this public site.
 # Deploy workers/grok-proxy.js, then put the worker URL here.
 grok:
-  proxy_url: ""
+  proxy_url: "https://zhejian-grok-proxy.jazzikp.workers.dev"
 
 
 # Friends / links
