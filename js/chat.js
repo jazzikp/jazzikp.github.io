@@ -105,9 +105,10 @@
             if (data === "[DONE]") return;
             try {
               var json = JSON.parse(data);
-              var delta = (((json.choices || [])[0] || {}).delta || {}).content || "";
-              if (delta) {
-                full += delta;
+              var delta = ((json.choices || [])[0] || {}).delta || {};
+              var piece = delta.content || "";
+              if (piece) {
+                full += piece;
                 bot.textContent = full;
                 log.scrollTop = log.scrollHeight;
               }

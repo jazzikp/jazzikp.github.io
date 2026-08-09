@@ -62,6 +62,7 @@ export default {
       body: JSON.stringify({
         model: "grok-4.5",
         stream: true,
+        reasoning_effort: "low",
         messages
       })
     });
