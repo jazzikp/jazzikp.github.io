@@ -1,0 +1,19 @@
+{
+  "name": "Zhejian Peng",
+  "short_name": "Zhejian",
+  "description": "Personal site of Zhejian Peng — recommendation systems, ads ranking, and applied ML.",
+  "icons": [{
+    "src": "icons/pwa_icon_128.png",
+    "sizes": "128x128",
+    "type": "image/png"
+  }, {
+    "src": "icons/pwa_icon_512.png",
+    "sizes": "512x512",
+    "type": "image/png"
+  }],
+  "background_color": "#111111",
+  "theme_color": "#111111",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait"
+}

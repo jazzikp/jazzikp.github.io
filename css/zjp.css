@@ -1,0 +1,91 @@
+/* Zhejian Peng — site overrides on top of Hux Blog / Bootstrap */
+
+.intro-header {
+  position: relative;
+}
+
+.intro-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 14, 0.28) 0%,
+    rgba(8, 10, 14, 0.42) 55%,
+    rgba(8, 10, 14, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+.intro-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.intro-header .site-heading h1,
+.intro-header .page-heading h1 {
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+.intro-header .site-heading .subheading,
+.intro-header .page-heading .subheading {
+  opacity: 0.92;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.navbar-custom .navbar-brand {
+  letter-spacing: 0.04em;
+}
+
+.sidebar-container .short-about img {
+  width: 72%;
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.post-preview > a > .post-title {
+  letter-spacing: -0.015em;
+}
+
+.post-content-preview {
+  font-style: normal;
+  color: #777;
+  line-height: 1.7;
+}
+
+.about-timeline {
+  margin: 8px 0 28px;
+  padding-left: 22px;
+}
+
+.about-timeline li {
+  margin-bottom: 8px;
+}
+
+footer {
+  border-top: 1px solid #f0f0f0;
+}
+
+footer .copyright {
+  line-height: 1.8;
+}
+
+footer .copyright .credits {
+  display: block;
+  margin-top: 6px;
+  color: #999;
+  font-size: 12px;
+}
+
+footer .copyright .credits a {
+  color: #777;
+}
+
+.tags a,
+.tag {
+  transition: border-color 0.15s ease, color 0.15s ease;
+}

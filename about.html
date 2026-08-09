@@ -1,0 +1,132 @@
+---
+layout: page
+title: "About"
+description: "彭哲健 · Zhejian Peng"
+header-img: "img/About_backgroud.jpg"
+multilingual: true
+---
+
+<!-- Language Selector -->
+<select class="sel-lang" onchange="onLanChange(this.options[this.options.selectedIndex].value)">
+    <option value="0" selected> 中文 Chinese </option>
+    <option value="1"> 英文 English </option>
+</select>
+
+<!-- Chinese Version -->
+<div class="zh post-container">
+
+    <blockquote>
+        <p>做推荐与广告排序的机器学习工程师。<br>
+            也是潜水员，网球爱好者。</p>
+    </blockquote>
+
+    <p>我是<strong>彭哲健</strong>，目前在 <a href="https://x.ai/">xAI</a> 做机器学习相关工作，关注推荐系统、广告排序，以及如何把现代模型真正用到大规模线上系统里。</p>
+
+    <p>毕业后第一份工作在 Walmart 做 Data Scientist，一年半从 entry 做到 Senior DS。之后去 TikTok 做视频推荐算法，在那里把推荐系统从数据、目标、模型到上线完整走了一遍。再之后在 Snap 做 Ads Ranking。这些年一直在「排序」这件事附近打转，也越来越享受把复杂系统拆开、再拼回去的过程。</p>
+
+    <h5>经历</h5>
+    <ul class="about-timeline">
+        <li><strong>xAI</strong> — 机器学习 / 广告与推荐</li>
+        <li><strong>Snap</strong> — Ads Ranking</li>
+        <li><strong>TikTok</strong> — 视频推荐算法</li>
+        <li><strong>Walmart</strong> — Data Scientist → Senior Data Scientist</li>
+    </ul>
+
+    <p>工作之外我喜欢打网球和潜水，是 <a href="https://www.padi.com/">PADI</a> 潜水员。偶尔打打 PS5，Night City 还是很能让人待很久。</p>
+
+    <p>这个站点用 <a href="https://pages.github.com/">GitHub Pages</a> 和 <a href="https://jekyllrb.com/">Jekyll</a> 搭建，主题 fork 自 <a href="https://github.com/Huxpro/huxpro.github.io">Hux Blog</a>。欢迎来
+        <a href="https://github.com/jazzikp">GitHub</a> 或
+        <a href="https://www.linkedin.com/in/zhejian-peng-82302712b/">LinkedIn</a>
+        找我。有问题可以直接留言。</p>
+
+    <h5>致谢</h5>
+    <ul>
+        <li>模板 fork 自 <a href="https://github.com/Huxpro/huxpro.github.io">Hux</a>，致谢作者黄玄。</li>
+        <li>感谢 <a href="https://jekyllrb.com/">Jekyll</a>、<a href="https://pages.github.com/">GitHub Pages</a> 和 <a href="https://getbootstrap.com/">Bootstrap</a>。</li>
+    </ul>
+</div>
+
+<!-- English Version -->
+<div class="en post-container">
+    <blockquote>
+        <p>A machine learning engineer working on recommendation and ads ranking.<br>
+            Also a scuba diver and tennis player.</p>
+    </blockquote>
+
+    <p>I'm <strong>Zhejian Peng</strong>. I currently work on machine learning at <a href="https://x.ai/">xAI</a>, with a focus on recommendation systems, ads ranking, and getting modern models to behave in large production systems.</p>
+
+    <p>My first job after school was as a Data Scientist at Walmart, where I went from entry level to Senior DS in about a year and a half. I then joined TikTok to work on video recommendation, and later Snap to work on ads ranking. Most of my career has been around ranking problems — and I still like taking a complicated system apart and putting it back together.</p>
+
+    <h5>Experience</h5>
+    <ul class="about-timeline">
+        <li><strong>xAI</strong> — Machine learning / ads &amp; recommendation</li>
+        <li><strong>Snap</strong> — Ads ranking</li>
+        <li><strong>TikTok</strong> — Video recommendation</li>
+        <li><strong>Walmart</strong> — Data Scientist → Senior Data Scientist</li>
+    </ul>
+
+    <p>Outside work I play tennis and scuba dive. I am a <a href="https://www.padi.com/">PADI</a> certified diver. I also spend some evenings in Night City on PS5.</p>
+
+    <p>This site is built with <a href="https://pages.github.com/">GitHub Pages</a> and <a href="https://jekyllrb.com/">Jekyll</a>. The theme is forked from <a href="https://github.com/Huxpro/huxpro.github.io">Hux Blog</a>. Find me on
+        <a href="https://github.com/jazzikp">GitHub</a> and
+        <a href="https://www.linkedin.com/in/zhejian-peng-82302712b/">LinkedIn</a>.
+        Questions and comments are welcome.</p>
+
+    <h5>Acknowledgements</h5>
+    <ul>
+        <li>Theme forked from <a href="https://github.com/Huxpro/huxpro.github.io">Hux</a> — thanks to Huang Xuan.</li>
+        <li>Thanks to <a href="https://jekyllrb.com/">Jekyll</a>, <a href="https://pages.github.com/">GitHub Pages</a>, and <a href="https://getbootstrap.com/">Bootstrap</a>.</li>
+    </ul>
+</div>
+
+<!-- Handle Language Change -->
+<script type="text/javascript">
+    var $zh = document.querySelector(".zh");
+    var $en = document.querySelector(".en");
+    var $select = document.querySelector("select");
+
+    window.addEventListener('hashchange', _render);
+
+    function _render() {
+        var _hash = window.location.hash;
+        if (_hash == "#en") {
+            $select.selectedIndex = 1;
+            $en.style.display = "block";
+            $zh.style.display = "none";
+        } else {
+            $select.selectedIndex = 0;
+            $zh.style.display = "block";
+            $en.style.display = "none";
+        }
+    }
+
+    function onLanChange(index) {
+        if (index == 0) {
+            window.location.hash = "#zh"
+        } else {
+            window.location.hash = "#en"
+        }
+    }
+
+    _render();
+</script>
+
+<!-- Gitalk 评论 start  -->
+{% if site.gitalk.enable  %}
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script type="text/javascript">
+    var gitalk = new Gitalk({
+        clientID: '{{site.gitalk.clientID}}',
+        clientSecret: '{{site.gitalk.clientSecret}}',
+        repo: '{{site.gitalk.repo}}',
+        owner: '{{site.gitalk.owner}}',
+        admin: ['{{site.gitalk.admin}}'],
+        id: 'about',
+        distractionFreeMode: '{{ site.gitalk.distractionFreeMode }}'
+    })
+    gitalk.render('gitalk-container')
+</script>
+{% endif %}
+<!-- Gitalk end -->

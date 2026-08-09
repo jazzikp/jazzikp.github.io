@@ -1,0 +1,85 @@
+# Site settings
+title: Zhejian Peng
+SEOTitle: 彭哲健 | Zhejian Peng
+header-img: img/post-bg-desk.jpg
+email: zhejianpeng@yahoo.com
+author: Zhejian Peng
+description: "Recommendation systems, ads ranking, and applied machine learning."
+keyword: "彭哲健, Zhejian Peng, Recommendation System, Ads Ranking, Machine Learning, Data Science"
+url: "https://jazzikp.github.io"
+baseurl: ""
+github_repo: "https://github.com/jazzikp/jazzikp.github.io"
+github_reponame: "jazzikp.github.io"
+
+# Sidebar settings
+sidebar: true
+sidebar-about-description: "Recommendation systems, ads ranking, and the craft of applied ML."
+sidebar-avatar: /img/about.jpg
+
+
+# SNS settings
+RSS: false
+github_username: jazzikp
+linkedin_username: zhejian-peng-82302712b
+twitter_username: zjpeng94
+instagram_username: jazzik_peng
+youtube_username: channel/UCR7ohymZdzclHCyr6YZW9vQ
+
+
+# Build settings
+permalink: pretty
+paginate: 10
+exclude: ["less", "node_modules", "Gruntfile.js", "package.json", "README.md", "vendor", "Gemfile", "Gemfile.lock"]
+anchorjs: true
+
+
+# Gems
+plugins: [jekyll-paginate]
+
+
+# Markdown settings
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+
+
+# Comments
+gitalk:
+  enable: true
+  clientID: 689ad5fe65e10d96c66a
+  clientSecret: 03d60c67e1f0fd6fe2d19ee7d1d20c6edf19c0a9
+  repo: jazzikp.github.io
+  owner: jazzikp
+  admin: jazzikp
+  distractionFreeMode: true
+
+
+# Analytics
+ga_track_id: 'UA-137525491-1'
+ga_domain: auto
+
+
+# Featured Tags
+featured-tags: true
+featured-condition-size: 1
+
+
+# Progressive Web Apps
+chrome-tab-theme-color: "#111111"
+service-worker: true
+
+
+# Friends / links
+friends: [
+    {
+        title: "GitHub",
+        href: "https://github.com/jazzikp"
+    },{
+        title: "LinkedIn",
+        href: "https://www.linkedin.com/in/zhejian-peng-82302712b/"
+    },{
+        title: "X",
+        href: "https://x.com/zjpeng94"
+    }
+]
