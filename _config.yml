@@ -29,7 +29,7 @@ youtube_username: channel/UCR7ohymZdzclHCyr6YZW9vQ
 # Build settings
 permalink: pretty
 paginate: 10
-exclude: ["less", "node_modules", "Gruntfile.js", "package.json", "README.md", "vendor", "Gemfile", "Gemfile.lock"]
+exclude: ["less", "node_modules", "Gruntfile.js", "package.json", "README.md", "vendor", "Gemfile", "Gemfile.lock", "workers"]
 anchorjs: true
 
 
@@ -67,7 +67,12 @@ featured-condition-size: 1
 
 # Progressive Web Apps
 chrome-tab-theme-color: "#111111"
-service-worker: true
+service-worker: false
+
+# Grok chat — proxy keeps the API key off this public site.
+# Deploy workers/grok-proxy.js, then put the worker URL here.
+grok:
+  proxy_url: ""
 
 
 # Friends / links

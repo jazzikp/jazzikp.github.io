@@ -1,0 +1,19 @@
+<button class="chat-launcher" type="button" data-open-chat aria-label="Open Grok chat">
+    <img src="{{ site.baseurl }}/img/avatar-anime.jpg" alt="">
+</button>
+<div class="chat-panel" id="grok-chat">
+    <div class="chat-head">
+        <img src="{{ site.baseurl }}/img/avatar-anime.jpg" alt="">
+        <div>
+            <strong>Grok</strong>
+            <span>on {{ site.author }}'s site</span>
+        </div>
+        <button class="chat-close" type="button" data-close-chat aria-label="Close">×</button>
+    </div>
+    <div class="chat-log" id="grok-log"></div>
+    <div class="chat-status" id="grok-status"></div>
+    <form class="chat-form" id="grok-form">
+        <textarea id="grok-input" rows="1" placeholder="Ask Grok anything…" required></textarea>
+        <button type="submit">Send</button>
+    </form>
+</div>

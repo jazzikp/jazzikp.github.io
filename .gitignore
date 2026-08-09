@@ -43,3 +43,7 @@ vendor
 .sass-cache
 node_modules
 Gemfile.lock
+.env
+js/grok-config.js
+.wrangler
+.dev.vars

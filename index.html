@@ -1,43 +1,69 @@
 ---
-layout: page
-description: "Recommendation, ranking, and applied machine learning."
+layout: default
 ---
-
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {{ post.content | strip_html | truncate:200 }}
+<div class="wrap">
+    <section class="hero">
+        <div>
+            <p class="eyebrow">彭哲健 · Zhejian Peng</p>
+            <h1>Ranking, recommendation, and the systems underneath.</h1>
+            <p class="lede">
+                Machine learning at xAI. I work on ads ranking and recommendation —
+                how models choose what people see, and how those systems stay honest at scale.
+            </p>
+            <div class="actions">
+                <button class="btn primary" type="button" data-open-chat>Talk to Grok</button>
+                <a class="btn ghost" href="{{ site.baseurl }}/about/">About me</a>
+            </div>
         </div>
-    </a>
-    <p class="post-meta">
-        Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.author }}{% endif %} on
-        {{ post.date | date: "%B %-d, %Y" }}
-    </p>
-</div>
-<hr>
-{% endfor %}
+        <div class="hero-art">
+            <img src="{{ site.baseurl }}/img/hero-anime.jpg" alt="Anime portrait of Zhejian Peng">
+            <div class="hero-chip">
+                <img src="{{ site.baseurl }}/img/avatar-anime.jpg" alt="">
+                <span>Ask the site Grok →</span>
+            </div>
+        </div>
+    </section>
 
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-    </li>
-    {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
+    <section class="meta-row">
+        <div class="meta-card">
+            <strong>Now</strong>
+            <p>xAI · machine learning, ads & recommendation</p>
+        </div>
+        <div class="meta-card">
+            <strong>Before</strong>
+            <p>Snap ads ranking · TikTok video rec · Walmart DS</p>
+        </div>
+        <div class="meta-card">
+            <strong>Away from the desk</strong>
+            <p>Tennis, PADI diving, Night City</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-head">
+            <h2>Writing</h2>
+            <a href="{{ site.baseurl }}/tags/">All notes</a>
+        </div>
+        <div class="post-list">
+            {% for post in paginator.posts %}
+            <a class="post-card" href="{{ post.url | prepend: site.baseurl }}">
+                <time>{{ post.date | date: "%b %Y" }}</time>
+                <div>
+                    <h3>{{ post.title }}</h3>
+                    <p>{{ post.subtitle | default: post.excerpt | strip_html | truncate: 140 }}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% if paginator.total_pages > 1 %}
+        <ul class="pager">
+            {% if paginator.previous_page %}
+            <li><a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">← Newer</a></li>
+            {% else %}<li></li>{% endif %}
+            {% if paginator.next_page %}
+            <li><a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older →</a></li>
+            {% endif %}
+        </ul>
+        {% endif %}
+    </section>
+</div>
