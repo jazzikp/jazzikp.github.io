@@ -4,6 +4,10 @@ Personal site: **[jazzikp.github.io](https://jazzikp.github.io)**
 
 Notes on recommendation systems, ads ranking, and applied machine learning. I also contributed to the Grok Coding RL model at xAI. The floating avatar is a Grok chat, with an anime portrait of me as the logo.
 
+## Write in the browser
+
+Open [/write/](https://jazzikp.github.io/write/). Draft markdown, preview it, then either download the file or publish with a GitHub token (Contents write on this repo only). The token is not stored on the site.
+
 ## Technical reports
 
 Add a file in `_reports/`:

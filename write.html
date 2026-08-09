@@ -1,0 +1,61 @@
+---
+layout: page
+title: Write
+description: Draft a report or note in the browser and publish it to this repo.
+eyebrow: J'Log
+permalink: /write/
+---
+<div class="write-app">
+    <p class="fine">GitHub Pages has no database. This editor commits markdown into <code>jazzikp.github.io</code>. Use a fine-grained token with Contents: Read and write on that repo only. It stays in this browser tab.</p>
+
+    <div class="write-bar">
+        <label>Type
+            <select id="w-type">
+                <option value="report">Report</option>
+                <option value="note">Note</option>
+            </select>
+        </label>
+        <label>Date
+            <input id="w-date" type="date">
+        </label>
+        <label class="grow">Title
+            <input id="w-title" type="text" placeholder="Ranking systems in production" required>
+        </label>
+    </div>
+    <div class="write-bar">
+        <label class="grow">Subtitle
+            <input id="w-sub" type="text" placeholder="Optional one-liner">
+        </label>
+        <label class="grow" id="w-tags-wrap">Tags
+            <input id="w-tags" type="text" placeholder="RecSys, ranking">
+        </label>
+    </div>
+
+    <div class="write-split">
+        <label class="write-col">Markdown
+            <textarea id="w-body" rows="18" placeholder="Write in GitHub-flavored markdown…"></textarea>
+        </label>
+        <div class="write-col">
+            <span class="write-label">Preview</span>
+            <div class="prose write-preview" id="w-preview"></div>
+        </div>
+    </div>
+
+    <div class="write-bar">
+        <label class="grow">GitHub token
+            <input id="w-token" type="password" autocomplete="off" placeholder="github_pat_… or ghp_…">
+        </label>
+        <button class="btn primary" id="w-publish" type="button">Publish</button>
+        <button class="btn ghost" id="w-download" type="button">Download .md</button>
+    </div>
+    <p class="write-status" id="w-status"></p>
+</div>
+<script>
+window.WRITE = {
+    owner: "{{ site.github_username }}",
+    repo: "{{ site.github_reponame }}",
+    branch: "main",
+    author: "{{ site.author }}"
+};
+</script>
+<script src="{{ site.baseurl }}/js/write.js"></script>
