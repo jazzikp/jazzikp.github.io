@@ -1,4 +1,10 @@
 (function () {
+  function ready(fn) {
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", fn);
+    else fn();
+  }
+
+  ready(function () {
   var panel = document.getElementById("grok-chat");
   var log = document.getElementById("grok-log");
   var form = document.getElementById("grok-form");
@@ -63,7 +69,8 @@
   input.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      form.requestSubmit();
+      if (typeof form.requestSubmit === "function") form.requestSubmit();
+      else form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
     }
   });
 
@@ -134,4 +141,5 @@
       busy = false;
     }
   }
+  });
 })();
