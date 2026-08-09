@@ -1,15 +1,15 @@
 ---
 layout: page
 title: Contact
-description: A written consult on ranking, recommendation, ads ML, or coding RL.
+description: Coaching on AI, career, education, and the work I do — ranking, recsys, ads ML, coding RL.
 eyebrow: Work with me
 permalink: /contact/
 ---
 <div class="contact-grid">
     <section class="consult-card">
         <p class="eyebrow">Paid consult</p>
-        <h2>Submit a technical question</h2>
-        <p>Written answer on ranking, recommendation, ads ML, or coding RL. I read the question myself. No calls unless we agree later.</p>
+        <h2>I'd love to help</h2>
+        <p>Send me what you're stuck on. I can coach on AI, career, school, or the systems I build — ranking, recommendation, ads ML, and coding RL. I'll read it myself and write you a careful reply. If a call would help, we can add that later.</p>
         <ul class="consult-meta">
             {% if site.consult.price != "" %}
             <li><strong>Fee</strong> {{ site.consult.price }}</li>
@@ -21,11 +21,11 @@ permalink: /contact/
         {% if site.consult.tally_embed != "" %}
         <iframe class="tally-frame" src="{{ site.consult.tally_embed }}" title="Paid consult form" loading="lazy"></iframe>
         {% elsif site.consult.checkout_url != "" %}
-        <a class="btn primary" href="{{ site.consult.checkout_url }}" target="_blank" rel="noopener">Pay and submit a question</a>
+        <a class="btn primary" href="{{ site.consult.checkout_url }}" target="_blank" rel="noopener">Book a consult</a>
         <p class="fine">Checkout is handled by Stripe or Lemon Squeezy. I never see your card.</p>
         {% else %}
-        <a class="btn primary" href="https://www.linkedin.com/in/{{ site.linkedin_username }}/" target="_blank" rel="noopener">Message me on LinkedIn</a>
-        <p class="fine">Payment link is not live yet. Reach me on LinkedIn and mention it is a consult.</p>
+        <a class="btn primary" href="https://www.linkedin.com/in/{{ site.linkedin_username }}/" target="_blank" rel="noopener">Say hello on LinkedIn</a>
+        <p class="fine">Payment link is coming. Message me on LinkedIn and we'll set up the consult from there.</p>
         {% endif %}
     </section>
 </div>
