@@ -1,10 +1,9 @@
 <footer class="site-footer">
     <div class="wrap">
         <div>© {{ site.time | date: '%Y' }} {{ site.title }} · {{ site.author }}</div>
-        <div>
+        <div class="footer-links">
             <a href="{{ site.baseurl }}/contact/">Contact</a>
-            · <a href="https://github.com/{{ site.github_username }}">GitHub</a>
-            · <a href="https://x.com/{{ site.twitter_username }}">X</a>
+            {% include socials.html %}
         </div>
     </div>
     <div class="made-by-grok" aria-label="Made by Grok">

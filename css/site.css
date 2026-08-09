@@ -522,6 +522,28 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 }
 .site-footer a { color: var(--muted); text-decoration: none; }
 .site-footer a:hover { color: var(--accent); }
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.site-footer .social-icons {
+  margin: 0;
+  gap: 12px;
+}
+.site-footer .social-icons a {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  color: var(--muted);
+}
+.site-footer .social-icons a:hover { color: var(--accent); }
+.site-footer .social-icons svg {
+  width: 16px !important;
+  height: 16px !important;
+  max-width: 16px;
+  max-height: 16px;
+}
 .made-by-grok {
   display: flex;
   align-items: center;
