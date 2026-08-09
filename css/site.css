@@ -153,6 +153,17 @@ a { color: var(--accent); text-underline-offset: 3px; }
   margin: 0 0 20px;
 }
 .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.socials {
+  margin: 16px 0 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+.socials a {
+  color: var(--muted);
+  text-decoration: none;
+  margin-right: 16px;
+}
+.socials a:hover { color: var(--accent); }
 .hero-art img {
   width: 100%;
   max-width: 280px;
