@@ -43,34 +43,6 @@ layout: default
 
     <section>
         <div class="section-head">
-            <h2>Reports</h2>
-            <a href="{{ site.baseurl }}/reports/">All reports</a>
-        </div>
-        <div class="post-list">
-            {% assign published = site.reports | where_exp: "r", "r.status != 'coming'" | sort: "date" | reverse %}
-            {% for report in published limit: 3 %}
-            <a class="post-card" href="{{ report.url | prepend: site.baseurl }}">
-                <time>{{ report.date | date: "%b %Y" }}</time>
-                <div>
-                    <h3>{{ report.title }}</h3>
-                    {% if report.subtitle %}<p>{{ report.subtitle }}</p>{% endif %}
-                </div>
-            </a>
-            {% endfor %}
-            {% for item in site.data.upcoming_reports limit: 3 %}
-            <div class="post-card is-soon">
-                <time>{{ item.eta }}</time>
-                <div>
-                    <h3>{{ item.title }}</h3>
-                    <p>{{ item.subtitle }}</p>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </section>
-
-    <section>
-        <div class="section-head">
             <h2>Blogs</h2>
             <a href="{{ site.baseurl }}/tags/">All blogs</a>
         </div>
