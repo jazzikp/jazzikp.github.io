@@ -82,7 +82,7 @@
       lines.push("catalog:    true");
       lines.push("tags:");
       if (tags.length) tags.forEach(function (t) { lines.push("    - " + t); });
-      else lines.push("    - Note");
+      else lines.push("    - Blog");
     }
     lines.push("---", "", bodyEl.value.replace(/\s+$/, ""), "");
     return lines.join("\n");
