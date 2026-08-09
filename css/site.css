@@ -146,6 +146,12 @@ a { color: var(--accent); text-underline-offset: 3px; }
   margin: 0 0 14px;
   font-size: 18px;
 }
+.motto cite {
+  font-style: normal;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--muted);
+}
 .lede {
   color: var(--muted);
   font-size: 18px;
