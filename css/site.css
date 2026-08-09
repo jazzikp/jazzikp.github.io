@@ -448,6 +448,21 @@ a { color: var(--accent); text-underline-offset: 3px; }
 }
 .site-footer a { color: var(--muted); text-decoration: none; }
 .site-footer a:hover { color: var(--accent); }
+.made-by-grok {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+  color: #a1a1aa;
+  font-size: 12px;
+}
+.made-by-grok svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  flex: none;
+}
 
 /* Chat */
 .chat-dock {
