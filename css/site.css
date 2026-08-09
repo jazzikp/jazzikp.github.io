@@ -138,7 +138,13 @@ a { color: var(--accent); text-underline-offset: 3px; }
   line-height: 1.25;
   font-weight: 600;
   letter-spacing: -0.015em;
+  margin: 0 0 10px;
+}
+.motto {
+  font-style: italic;
+  color: var(--ink);
   margin: 0 0 14px;
+  font-size: 18px;
 }
 .lede {
   color: var(--muted);

@@ -1,6 +1,6 @@
 // Public career facts only. No phone, email, address, pay, or immigration.
 export const RESUME = `
-# Zhejian Peng (彭哲健)
+# Zhejian Peng
 Machine learning engineer. Ranking, recommendation, ads ML, coding RL.
 
 ## Experience
