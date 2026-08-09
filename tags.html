@@ -1,26 +1,17 @@
 ---
-title: Blogs
-layout: page
-description: Posts on recommendation, ranking, and machine learning.
+layout: null
+permalink: /tags/
 ---
-<div class="prose" style="max-width:none">
-    <div class="tags" id="tag_cloud">
-        {% for tag in site.tags %}
-        <a class="tag" href="#{{ tag[0] }}">{{ tag[0] }}</a>
-        {% endfor %}
-    </div>
-    {% for tag in site.tags %}
-    <h2 id="{{ tag[0] }}">{{ tag[0] }}</h2>
-    <div class="post-list">
-        {% for post in tag[1] %}
-        <a class="post-card" href="{{ post.url | prepend: site.baseurl }}">
-            <time>{{ post.date | date: "%b %Y" }}</time>
-            <div>
-                <h3>{{ post.title }}</h3>
-                {% if post.subtitle %}<p>{{ post.subtitle }}</p>{% endif %}
-            </div>
-        </a>
-        {% endfor %}
-    </div>
-    {% endfor %}
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting to Blogs</title>
+    <link rel="canonical" href="{{ site.url }}{{ site.baseurl }}/blogs/">
+    <meta http-equiv="refresh" content="0; url={{ site.baseurl }}/blogs/">
+    <script>location.replace({{ site.baseurl | append: "/blogs/" | jsonify }} + location.hash);</script>
+</head>
+<body>
+    <p><a href="{{ site.baseurl }}/blogs/">This page is now <strong>/blogs/</strong>.</a></p>
+</body>
+</html>

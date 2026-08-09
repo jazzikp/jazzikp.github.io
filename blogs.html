@@ -1,0 +1,39 @@
+---
+title: Blogs
+layout: page
+permalink: /blogs/
+description: Posts on recommendation, ranking, and machine learning.
+---
+<div class="prose" style="max-width:none">
+    <div class="tags" id="tag_cloud">
+        {% assign seen_tags = "" %}
+        {% for post in site.posts %}
+            {% for tag in post.tags %}
+                {% assign token = "||" | append: tag | append: "||" %}
+                {% unless seen_tags contains token %}
+                    <a class="tag" href="#{{ tag }}">{{ tag }}</a>
+                    {% assign seen_tags = seen_tags | append: token %}
+                {% endunless %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="post-list">
+        {% assign placed_tags = "" %}
+        {% for post in site.posts %}
+            {% for tag in post.tags %}
+                {% assign token = "||" | append: tag | append: "||" %}
+                {% unless placed_tags contains token %}
+                    <span class="tag-anchor" id="{{ tag }}"></span>
+                    {% assign placed_tags = placed_tags | append: token %}
+                {% endunless %}
+            {% endfor %}
+            <a class="post-card" href="{{ post.url | prepend: site.baseurl }}">
+                <time>{{ post.date | date: "%b %Y" }}</time>
+                <div>
+                    <h3>{{ post.title }}</h3>
+                    {% if post.subtitle %}<p>{{ post.subtitle }}</p>{% endif %}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>

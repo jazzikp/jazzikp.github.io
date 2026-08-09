@@ -233,6 +233,11 @@ a { color: var(--accent); text-underline-offset: 3px; }
 }
 .section-head a:hover { color: var(--accent); }
 .post-list { display: grid; gap: 0; padding-bottom: 36px; }
+.tag-anchor {
+  display: block;
+  height: 0;
+  scroll-margin-top: 72px;
+}
 .post-card {
   display: grid;
   grid-template-columns: 92px 1fr;
