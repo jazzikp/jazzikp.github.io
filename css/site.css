@@ -534,7 +534,6 @@ a { color: var(--accent); text-underline-offset: 3px; }
 }
 .chat-head img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .chat-head strong { display: block; font-size: 14px; color: var(--ink); }
-.chat-head span { color: var(--muted); font-size: 12px; }
 .chat-close {
   margin-left: auto;
   background: none;
