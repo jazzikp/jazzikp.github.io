@@ -22,7 +22,7 @@
     panel.removeAttribute("hidden");
     if (dock) dock.classList.add("open");
     if (!log.childElementCount) {
-      addBubble("bot", "Hey — I'm Jazzik. I have Zhejian's public resume. Paste a job description and ask if it's a good fit, or ask about his work.");
+      addBubble("bot", "Hi, I'm Jazzik, ask me anything about my work or life.");
     }
     input.focus();
   }
