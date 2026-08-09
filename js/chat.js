@@ -40,10 +40,60 @@
     el.addEventListener("click", closeChat);
   });
 
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function renderMarkdown(src) {
+    var text = escapeHtml(src || "").replace(/\r\n/g, "\n");
+    var fences = [];
+    text = text.replace(/```[\w]*\n([\s\S]*?)```/g, function (_, code) {
+      fences.push("<pre><code>" + code.replace(/\n$/, "") + "</code></pre>");
+      return "\u0000F" + (fences.length - 1) + "\u0000";
+    });
+    text = text.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+    text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    text = text.replace(/(^|[^\*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+    text = text.replace(/^### (.+)$/gm, "\n<h4>$1</h4>\n");
+    text = text.replace(/^## (.+)$/gm, "\n<h3>$1</h3>\n");
+    text = text.replace(/^# (.+)$/gm, "\n<h3>$1</h3>\n");
+    text = text.replace(/(?:^|\n)((?:[-*] .+\n?)+)/g, function (_, block) {
+      var items = block.trim().split("\n").map(function (line) {
+        return "<li>" + line.replace(/^[-*] /, "") + "</li>";
+      }).join("");
+      return "\n<ul>" + items + "</ul>\n";
+    });
+    text = text.replace(/(?:^|\n)((?:\d+\. .+\n?)+)/g, function (_, block) {
+      var items = block.trim().split("\n").map(function (line) {
+        return "<li>" + line.replace(/^\d+\. /, "") + "</li>";
+      }).join("");
+      return "\n<ol>" + items + "</ol>\n";
+    });
+    text = text.split(/\n{2,}/).map(function (part) {
+      part = part.trim();
+      if (!part) return "";
+      if (/^<(ul|ol|h[34]|pre)/.test(part)) return part;
+      return "<p>" + part.replace(/\n/g, "<br>") + "</p>";
+    }).join("");
+    text = text.replace(/\u0000F(\d+)\u0000/g, function (_, i) { return fences[Number(i)]; });
+    return text || "<p></p>";
+  }
+
+  function setBubble(el, who, text) {
+    if (who === "bot") el.innerHTML = renderMarkdown(text);
+    else el.textContent = text;
+    log.scrollTop = log.scrollHeight;
+  }
+
   function addBubble(who, text) {
     var div = document.createElement("div");
     div.className = "bubble " + who;
-    div.textContent = text;
+    setBubble(div, who, text);
     log.appendChild(div);
     log.scrollTop = log.scrollHeight;
     return div;
@@ -116,13 +166,12 @@
               var piece = delta.content || "";
               if (piece) {
                 full += piece;
-                bot.textContent = full;
-                log.scrollTop = log.scrollHeight;
+                setBubble(bot, "bot", full);
               }
             } catch (err) {}
           });
         }
-        if (!full) bot.textContent = "(empty response)";
+        if (!full) setBubble(bot, "bot", "(empty response)");
         messages.push({ role: "assistant", content: full || "" });
       } else {
         var json = await res.json();
@@ -131,11 +180,11 @@
           json.output_text ||
           json.text ||
           JSON.stringify(json);
-        bot.textContent = text;
+        setBubble(bot, "bot", text);
         messages.push({ role: "assistant", content: text });
       }
     } catch (err) {
-      bot.textContent = "Something went wrong talking to Grok.";
+      setBubble(bot, "bot", "Something went wrong talking to Grok.");
       setStatus(String(err.message || err));
     } finally {
       busy = false;
