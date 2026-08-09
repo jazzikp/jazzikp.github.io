@@ -1,11 +1,11 @@
 # Site settings
-title: Zhejian Peng
-SEOTitle: 彭哲健 | Zhejian Peng
+title: J'Log
+SEOTitle: J'Log | Zhejian Peng
 header-img: img/post-bg-desk.jpg
 email: zhejianpeng@yahoo.com
 author: Zhejian Peng
-description: "Ads ranking, recommendation, and Grok Coding RL at xAI."
-keyword: "彭哲健, Zhejian Peng, Grok Coding RL, Recommendation System, Ads Ranking, Machine Learning"
+description: "J'Log — notes by Zhejian Peng on ranking, recommendation, and Grok Coding RL."
+keyword: "J'Log, 彭哲健, Zhejian Peng, Grok Coding RL, Recommendation System, Ads Ranking, Machine Learning"
 url: "https://jazzikp.github.io"
 baseurl: ""
 github_repo: "https://github.com/jazzikp/jazzikp.github.io"

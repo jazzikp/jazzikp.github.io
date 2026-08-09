@@ -1,4 +1,4 @@
-# 彭哲健 · Zhejian Peng
+# J'Log · Zhejian Peng
 
 Personal site: **[jazzikp.github.io](https://jazzikp.github.io)**
 
