@@ -53,7 +53,7 @@ defaults:
 consult:
   enabled: true
   price: ""
-  turnaround: "3–5 days"
+  turnaround: "24 hours"
   topics: "AI, career, education, ranking, recsys, ads ML, coding RL"
   checkout_url: ""
   tally_embed: ""
