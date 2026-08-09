@@ -19,7 +19,7 @@ sidebar-avatar: /img/about.jpg
 # SNS settings
 RSS: false
 github_username: jazzikp
-linkedin_username: zhejian-peng-82302712b
+linkedin_username: zhejian-peng
 twitter_username: zjpeng94
 instagram_username: jazzik_peng
 youtube_username: channel/UCR7ohymZdzclHCyr6YZW9vQ
@@ -104,7 +104,7 @@ friends: [
         href: "https://github.com/jazzikp"
     },{
         title: "LinkedIn",
-        href: "https://www.linkedin.com/in/zhejian-peng-82302712b/"
+        href: "https://www.linkedin.com/in/zhejian-peng/"
     },{
         title: "X",
         href: "https://x.com/zjpeng94"
