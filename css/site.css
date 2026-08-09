@@ -714,6 +714,77 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 .report-hint { color: var(--muted); font-size: 14px; padding-bottom: 72px; font-family: var(--font-sans); }
 .report-hint code { font-family: var(--font-mono); font-size: 12px; }
 
+.projects-page { padding-bottom: 72px; }
+.project-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 4px 0 22px;
+}
+.project-filters button {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.project-filters button.on,
+.project-filters button:hover {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding-bottom: 8px;
+}
+.home-projects { padding-bottom: 28px; }
+.project-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 18px 18px 16px;
+}
+.project-card:hover {
+  border-color: var(--accent);
+}
+.project-card:hover h3 { color: var(--accent); }
+.project-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+}
+.project-card time { color: var(--muted); }
+.project-kind {
+  text-transform: capitalize;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  font-weight: 600;
+}
+.project-card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.project-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -823,7 +894,7 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 
 @media (max-width: 860px) {
   body { font-size: 17px; }
-  .hero, .about-grid, .post-card, .timeline li, .meta-row, .career-item, .contact-grid {
+  .hero, .about-grid, .post-card, .timeline li, .meta-row, .career-item, .contact-grid, .project-grid {
     grid-template-columns: 1fr;
   }
   .meta-card + .meta-card { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
