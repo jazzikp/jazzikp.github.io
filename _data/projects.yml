@@ -5,46 +5,9 @@
   url: https://github.com/jazzikp/difficulty_aware_looped_transformer
   featured: true
 
-- title: AMD GPU benchmark
-  year: "2024"
-  kind: code
-  summary: Benchmarked AMD GPU training throughput on Amazon review data.
-  url: https://github.com/jazzikp/amd_gpu_benchmark
-
 - title: Fresh in-store production
   year: "2019–2021"
   kind: system
   summary: Probabilistic forecast plus optimization for what a store should bake and stock. US patent 2022/0318709 A1.
   url: https://patents.google.com/patent/US20220318709A1
   featured: true
-
-- title: Autonomous robot car
-  year: "2020"
-  kind: physical
-  summary: Built a small self-driving car and ran it in the real world, following the DeepPiCar series.
-  url: https://github.com/jazzikp/Autonomous-Robot-Car
-  featured: true
-
-- title: Unsupervised face recognition
-  year: "2020"
-  kind: code
-  summary: Meta-learning for face recognition without labeled identities.
-  url: https://github.com/jazzikp/Unsupervised-Face-Recognition-via-Meta-Learning
-
-- title: Show and Tell, in PyTorch
-  year: "2019"
-  kind: code
-  summary: Image captioning model in PyTorch, from pixels to a sentence.
-  url: https://github.com/jazzikp/Show-Tell-Image-Caption-in-PyTorch
-
-- title: SPAN margin on futures
-  year: "2018"
-  kind: code
-  summary: ICE Sugar VaR and SPAN-style margin on futures contracts.
-  url: https://github.com/jazzikp/SPAN-Margin-on-Future-Contracts
-
-- title: CDS pricing
-  year: "2018"
-  kind: code
-  summary: Credit-default swap pricing notebooks.
-  url: https://github.com/jazzikp/CDS_Pricing

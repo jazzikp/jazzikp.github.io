@@ -2,18 +2,12 @@
 title: Projects
 layout: page
 permalink: /projects/
-description: Things I built — code, hardware, and systems. Research notes live in Blogs.
+description: Things I built. Research notes live in Blogs.
 ---
 <div class="projects-page">
-    <div class="project-filters" role="tablist" aria-label="Project type">
-        <button type="button" class="on" data-kind="all">All</button>
-        <button type="button" data-kind="code">Code</button>
-        <button type="button" data-kind="physical">Physical</button>
-        <button type="button" data-kind="system">Systems</button>
-    </div>
     <div class="project-grid">
         {% for p in site.data.projects %}
-        <a class="project-card" data-kind="{{ p.kind }}" href="{{ p.url }}" {% if p.url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+        <a class="project-card" href="{{ p.url }}" {% if p.url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
             <div class="project-meta">
                 <time>{{ p.year }}</time>
                 <span class="project-kind">{{ p.kind }}</span>
@@ -24,18 +18,3 @@ description: Things I built — code, hardware, and systems. Research notes live
         {% endfor %}
     </div>
 </div>
-<script>
-(function () {
-  var buttons = document.querySelectorAll(".project-filters [data-kind]");
-  var cards = document.querySelectorAll(".project-card");
-  buttons.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var kind = btn.getAttribute("data-kind");
-      buttons.forEach(function (b) { b.classList.toggle("on", b === btn); });
-      cards.forEach(function (card) {
-        card.hidden = kind !== "all" && card.getAttribute("data-kind") !== kind;
-      });
-    });
-  });
-})();
-</script>
