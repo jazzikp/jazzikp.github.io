@@ -1,0 +1,11 @@
+---
+layout: null
+sitemap: false
+---
+User-agent: *
+Allow: /
+
+# The draft editor is a local authoring tool, not content.
+Disallow: /write/
+
+Sitemap: {{ site.url }}{{ site.baseurl }}/sitemap.xml

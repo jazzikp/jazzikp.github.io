@@ -1,0 +1,94 @@
+/* Page / post */
+.page-hero, .post-hero { padding: 40px 0 8px; }
+.page-hero h1, .post-hero h1 {
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.25;
+  margin: 0 0 10px;
+  letter-spacing: -0.015em;
+}
+.page-hero p, .post-hero .sub {
+  color: var(--muted);
+  margin: 0;
+  max-width: 40rem;
+}
+.post-hero .meta {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 12px;
+  font-family: var(--font-sans);
+}
+.tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.tag {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--font-sans);
+}
+.prose {
+  max-width: var(--max);
+  padding: 12px 0 72px;
+}
+.prose h2, .prose h3, .prose h4 { line-height: 1.3; }
+.prose a { color: var(--accent); }
+.prose p { margin: 1em 0; }
+.prose img { border-radius: 2px; margin: 20px 0; border: 1px solid var(--line); }
+.prose pre, .prose code { font-family: var(--font-mono); font-size: 0.86em; }
+.prose pre {
+  background: var(--code-bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 14px;
+  overflow: auto;
+}
+.prose blockquote {
+  margin: 22px 0;
+  padding: 0 0 0 16px;
+  border-left: 2px solid var(--accent);
+  color: var(--muted);
+}
+
+// Copy button, revealed on hover so it never competes with the code itself.
+.code-block {
+  position: relative;
+}
+.code-copy {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 9px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.code-block:hover .code-copy,
+.code-copy:focus-visible,
+.code-copy.is-done { opacity: 1; }
+.code-copy:hover { color: var(--ink); border-color: var(--ink); }
+.code-copy.is-done { color: var(--accent); border-color: var(--accent); }
+
+// Anchors appear on hover; the heading keeps its scroll offset clear of the
+// sticky nav so a deep link does not land underneath it.
+.prose h1, .prose h2, .prose h3, .prose h4 { scroll-margin-top: 74px; }
+.heading-anchor {
+  margin-left: 8px;
+  color: var(--faint);
+  text-decoration: none;
+  font-weight: 400;
+  opacity: 0;
+  transition: opacity .15s ease;
+}
+.prose h1:hover .heading-anchor,
+.prose h2:hover .heading-anchor,
+.prose h3:hover .heading-anchor,
+.prose h4:hover .heading-anchor,
+.heading-anchor:focus-visible { opacity: 1; }
+

@@ -4,7 +4,7 @@ title:      Python for Absolute Newbies
 subtitle:   Python installation, pip, and some basic functionality
 date:       2019-04-03
 author:     Zhejian Peng
-header-img: img/python-tutorial-for-beginners.jpg
+header-img: img/python-tutorial-for-beginners.webp
 catalog: true
 tags:
     - Python
@@ -14,7 +14,7 @@ tags:
 接下来的主题会渐渐集中讲一些 Data Science 的一些应用和建模方法。
 使用 macOS Mojave.
 
-# Zen of Python
+## Zen of Python
 
 Python was designed as a successor to the [ABC language](https://en.wikipedia.org/wiki/ABC_(programming_language)) by
 [Guido van Rossum](https://en.wikipedia.org/wiki/Guido_van_Rossum). 
@@ -36,7 +36,7 @@ python
 >>> import this
 ```
 
-# Install Python3.7
+## Install Python3.7
 
 Let's see how to install Python3.6. Mac come with default python2.7 installed. We want to use Python3.7 here.
 
@@ -57,7 +57,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 
 Congrats! You know have the latest version of Python ready!
 
-# Virtual Environment
+## Virtual Environment
 
 Do use a virtual environment, PLEASE!!! Virtual environment allow you to separate your developing environment without interfering with the system. 
 
@@ -101,8 +101,8 @@ Now every time before you start coding, remember to activate the virtual environ
 alias tutorial='source ~/Environment/python_tutorial/bin/activate'
 ``` 
 
-Here you need to install code command. It's very easy. Open VS code you installed previously, and type <kbd>shift</kbd> + <kbd>command</kbd> + <kbd>p</kbd>. Then type ![this](/img/Python_for_Absolute_Newbies/code.jpg)
+Here you need to install code command. It's very easy. Open VS code you installed previously, and type <kbd>shift</kbd> + <kbd>command</kbd> + <kbd>p</kbd>. Then type ![The VS Code command palette](/img/vscode-command-palette.webp){: loading="lazy" decoding="async" width="820" height="116"}
 
 Now you have the basic environment setup!!! Let's start coding
 
-# Hello World
+## Hello World

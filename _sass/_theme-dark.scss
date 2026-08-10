@@ -1,0 +1,57 @@
+
+html[data-theme="dark"] body {
+  background-color: var(--bg);
+}
+html[data-theme="dark"] .chat-panel,
+html[data-theme="dark"] .chat-hint {
+  box-shadow: var(--shadow);
+}
+html[data-theme="dark"] .btn.primary,
+html[data-theme="dark"] .chat-form button {
+  font-weight: 600;
+}
+html[data-theme="dark"] .hero-art img,
+html[data-theme="dark"] .about-photo {
+  border-color: var(--line);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+html[data-theme="dark"] .highlight pre,
+html[data-theme="dark"] pre,
+html[data-theme="dark"] .highlight .hll {
+  background-color: var(--code-bg);
+  border-color: var(--line);
+  color: var(--ink);
+}
+html[data-theme="dark"] .highlight .c,
+html[data-theme="dark"] .highlight .cm,
+html[data-theme="dark"] .highlight .c1,
+html[data-theme="dark"] .highlight .cs { color: #8a8a8e; font-style: italic; }
+html[data-theme="dark"] .highlight .k,
+html[data-theme="dark"] .highlight .kd,
+html[data-theme="dark"] .highlight .kn { color: #c8c4bc; }
+html[data-theme="dark"] .highlight .s,
+html[data-theme="dark"] .highlight .s1,
+html[data-theme="dark"] .highlight .s2,
+html[data-theme="dark"] .highlight .sb,
+html[data-theme="dark"] .highlight .sc { color: #b8b3ab; }
+html[data-theme="dark"] .highlight .mi,
+html[data-theme="dark"] .highlight .mf,
+html[data-theme="dark"] .highlight .mh { color: #d0cbc3; }
+html[data-theme="dark"] .highlight .nf { color: #ececec; }
+html[data-theme="dark"] .highlight .o,
+html[data-theme="dark"] .highlight .p { color: #9a9a9e; font-weight: 400; }
+html[data-theme="dark"] .highlight .na { color: #c8c4bc; }
+html[data-theme="dark"] .highlight .nt { color: #d6d2cb; }
+html[data-theme="dark"] .highlight .err { color: #e07a6a; background: none; }
+
+::selection { background: rgba(15, 95, 99, 0.18); }
+html[data-theme="dark"] ::selection {
+  background: rgba(214, 210, 203, 0.22);
+  color: #ececec;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  body, .site-nav, .chat-panel, .chat-hint, .consult-card, .hello-card {
+    transition: background-color .22s ease, color .22s ease, border-color .22s ease, box-shadow .22s ease;
+  }
+}

@@ -3,6 +3,7 @@
         <div>© {{ site.time | date: '%Y' }} {{ site.title }} · {{ site.author }}</div>
         <div class="footer-links">
             <a href="{{ site.baseurl }}/contact/">Contact</a>
+            <a href="{{ site.baseurl }}/feed.xml">RSS</a>
             {% include socials.html %}
         </div>
     </div>
@@ -13,5 +14,40 @@
         <span>Made by Grok</span>
     </div>
 </footer>
-<script src="{{ site.baseurl }}/js/site.js"></script>
-<script src="{{ site.baseurl }}/js/chat.js"></script>
+
+<script>
+// The chat widget is ~8 KB that most visits never use, so it is fetched on the
+// first click instead of on every page load. The click that triggers the load
+// is replayed once the module is ready, so it still feels instant.
+(function () {
+  var triggers = document.querySelectorAll("[data-open-chat]");
+  var loading = false;
+
+  function load(el) {
+    if (loading) return;
+    loading = true;
+    triggers.forEach(function (t) { t.removeEventListener("click", t._chatLoad); });
+    var s = document.createElement("script");
+    s.src = {{ site.baseurl | append: "/js/chat.js?v=" | append: site.asset_version | jsonify }};
+    // chat.js binds its own handlers on execute, so replaying the click opens it.
+    s.onload = function () { el.click(); };
+    document.head.appendChild(s);
+  }
+
+  triggers.forEach(function (el) {
+    el._chatLoad = function () { load(el); };
+    el.addEventListener("click", el._chatLoad);
+  });
+})();
+</script>
+
+{%- if site.service-worker %}
+<script>
+// Registered after load so it never competes with the page's own requests.
+if ("serviceWorker" in navigator) {
+  addEventListener("load", function () {
+    navigator.serviceWorker.register({{ site.baseurl | append: "/sw.js" | jsonify }}).catch(function () {});
+  });
+}
+</script>
+{%- endif %}

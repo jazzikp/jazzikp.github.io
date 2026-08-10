@@ -6,12 +6,18 @@ eyebrow: Zhejian Peng
 ---
 <div class="about-grid">
     <div>
-        <img class="about-photo" src="{{ site.baseurl }}/img/hero-anime.jpg" alt="Anime portrait of Zhejian Peng">
+        <img class="about-photo"
+             src="{{ site.baseurl }}/img/hero-anime-400.webp"
+             srcset="{{ site.baseurl }}/img/hero-anime-400.webp 400w, {{ site.baseurl }}/img/hero-anime-800.webp 800w"
+             sizes="(max-width: 860px) 100vw, 220px"
+             width="220" height="293"
+             alt="Anime portrait of Zhejian Peng"
+             fetchpriority="high" decoding="async">
     </div>
     <div class="prose" style="padding-top:0">
-        <div class="lang-tabs">
-            <button type="button" class="on" data-lang="en">English</button>
-            <button type="button" data-lang="zh">中文</button>
+        <div class="lang-tabs" role="tablist" aria-label="Language">
+            <button type="button" class="on" role="tab" aria-selected="true" data-lang="en">English</button>
+            <button type="button" role="tab" aria-selected="false" data-lang="zh">中文</button>
         </div>
 
         <div data-lang-panel="en">
@@ -133,18 +139,4 @@ eyebrow: Zhejian Peng
         </ul>
     </div>
 </div>
-<script>
-(function () {
-  var tabs = document.querySelectorAll("[data-lang]");
-  var panels = document.querySelectorAll("[data-lang-panel]");
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-      var lang = tab.getAttribute("data-lang");
-      tabs.forEach(function (t) { t.classList.toggle("on", t === tab); });
-      panels.forEach(function (p) {
-        p.hidden = p.getAttribute("data-lang-panel") !== lang;
-      });
-    });
-  });
-})();
-</script>
+<script defer src="{{ site.baseurl }}/js/lang.js?v={{ site.asset_version }}"></script>

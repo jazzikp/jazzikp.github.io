@@ -4,36 +4,47 @@ layout: page
 permalink: /blogs/
 description: Research notes on recommendation, ranking, and machine learning. Builds live under Projects.
 ---
-<div class="prose" style="max-width:none">
-    <div class="tags" id="tag_cloud">
-        {% assign seen_tags = "" %}
-        {% for post in site.posts %}
-            {% for tag in post.tags %}
-                {% assign token = "||" | append: tag | append: "||" %}
-                {% unless seen_tags contains token %}
-                    <a class="tag" href="#{{ tag }}">{{ tag }}</a>
-                    {% assign seen_tags = seen_tags | append: token %}
-                {% endunless %}
-            {% endfor %}
-        {% endfor %}
+<div class="blog-index">
+    <div class="blog-filters">
+        <label class="blog-search">
+            <span class="visually-hidden">Search posts</span>
+            <input type="search" id="post-search" placeholder="Search posts…" autocomplete="off" spellcheck="false">
+        </label>
+        <div class="tags" id="tag-filters">
+            <button type="button" class="tag is-on" data-tag="">All</button>
+            {%- assign seen_tags = "" -%}
+            {%- for post in site.posts -%}
+                {%- for tag in post.tags -%}
+                    {%- assign token = "||" | append: tag | append: "||" -%}
+                    {%- unless seen_tags contains token -%}
+                        <button type="button" class="tag" data-tag="{{ tag | downcase }}">{{ tag }}</button>
+                        {%- assign seen_tags = seen_tags | append: token -%}
+                    {%- endunless -%}
+                {%- endfor -%}
+            {%- endfor -%}
+        </div>
     </div>
-    <div class="post-list">
-        {% assign placed_tags = "" %}
-        {% for post in site.posts %}
-            {% for tag in post.tags %}
-                {% assign token = "||" | append: tag | append: "||" %}
-                {% unless placed_tags contains token %}
-                    <span class="tag-anchor" id="{{ tag }}"></span>
-                    {% assign placed_tags = placed_tags | append: token %}
-                {% endunless %}
-            {% endfor %}
-            <a class="post-card" href="{{ post.url | prepend: site.baseurl }}">
-                <time>{{ post.date | date: "%b %Y" }}</time>
-                <div>
-                    <h3>{{ post.title }}</h3>
-                    {% if post.subtitle %}<p>{{ post.subtitle }}</p>{% endif %}
-                </div>
-            </a>
-        {% endfor %}
+
+    <div class="post-list" id="post-list">
+        {%- for post in site.posts %}
+        {%- comment -%}
+          Tags are pipe-delimited and pipe-wrapped (|nlp|stanford|) so an exact
+          match is a plain substring test, which keeps working for tags that
+          contain spaces such as "Data Science".
+        {%- endcomment -%}
+        <a class="post-card" href="{{ post.url | prepend: site.baseurl }}"
+           data-tags="|{{ post.tags | join: '|' | downcase }}|"
+           data-title="{{ post.title | downcase | escape }} {{ post.subtitle | downcase | escape }}">
+            <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %Y" }}</time>
+            <div>
+                <h2>{{ post.title }}</h2>
+                {% if post.subtitle %}<p>{{ post.subtitle }}</p>{% endif %}
+            </div>
+        </a>
+        {%- endfor %}
     </div>
+
+    <p class="blog-empty" id="blog-empty" hidden>No posts match that search.</p>
 </div>
+
+<script defer src="{{ site.baseurl }}/js/blogs.js?v={{ site.asset_version }}"></script>
