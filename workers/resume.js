@@ -5,7 +5,7 @@ Machine learning engineer. Ranking, recommendation, ads ML, coding RL.
 
 ## Experience
 xAI — Member of Technical Staff (2025–present)
-- Full-time on Grok Coding RL for Grok 4.5 and Grok 4.6: training Grok to write, debug, and reason about real software.
+- Full-time on Grok Coding RL: training Grok to write, debug, and reason about real software.
 
 Snap — Machine Learning Engineer, tech lead, product ads ranking (2023–2025)
 - LLM synthetic labels and content understanding for product ads.
