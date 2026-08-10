@@ -14,6 +14,14 @@ Other questions: answer normally about his work, ranking, recsys, coding RL. Ten
 RESUME:
 ${RESUME}`;
 
+const TRANSLATE_SYSTEM = `You are Grok Translation. Translate the user's HTML blog into the requested language.
+Rules:
+- Output ONLY the translated HTML. No preamble, no markdown fences, no commentary.
+- Preserve every HTML tag, attribute, href, class, id, and table structure.
+- Preserve math (LaTeX in \\( \\), $$ $$, or MathJax). Do not translate identifiers like AttnRes, KDA, MLA, MoE, PreNorm.
+- Keep numbers, paper ids, and code unchanged.
+- Translate visible prose only.`;
+
 const ALLOW_ORIGIN = [
   "https://jazzikp.github.io",
   "http://localhost:4000",
@@ -39,7 +47,13 @@ export default {
       return new Response(null, { status: 204, headers });
     }
     const url = new URL(request.url);
-    if (request.method !== "POST" || url.pathname !== "/chat") {
+    if (request.method !== "POST") {
+      return new Response("Not found", { status: 404, headers });
+    }
+    if (url.pathname === "/translate") {
+      return translate(request, env, headers);
+    }
+    if (url.pathname !== "/chat") {
       return new Response("Not found", { status: 404, headers });
     }
     if (!env.XAI_API_KEY) {
@@ -91,3 +105,62 @@ export default {
     });
   }
 };
+
+async function translate(request, env, headers) {
+  if (!env.XAI_API_KEY) {
+    return new Response("Missing XAI_API_KEY", { status: 500, headers });
+  }
+  let payload;
+  try {
+    payload = await request.json();
+  } catch {
+    return new Response("Invalid JSON", { status: 400, headers });
+  }
+  const target = typeof payload.target === "string" ? payload.target.trim().slice(0, 80) : "";
+  const html = typeof payload.html === "string" ? payload.html : "";
+  if (!target || !html) {
+    return new Response("Need target and html", { status: 400, headers });
+  }
+  if (html.length > 120000) {
+    return new Response("Post too long to translate", { status: 413, headers });
+  }
+
+  const upstream = await fetch("https://api.x.ai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.XAI_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "grok-4.5",
+      stream: false,
+      reasoning_effort: "low",
+      temperature: 0,
+      messages: [
+        { role: "system", content: TRANSLATE_SYSTEM },
+        { role: "user", content: "Target language: " + target + "\n\n" + html }
+      ]
+    })
+  });
+
+  if (!upstream.ok) {
+    const text = await upstream.text();
+    return new Response(text || "Upstream error", {
+      status: upstream.status,
+      headers: { ...headers, "Content-Type": "text/plain" }
+    });
+  }
+
+  let out = "";
+  try {
+    const json = await upstream.json();
+    out = (((json.choices || [])[0] || {}).message || {}).content || "";
+  } catch {
+    return new Response("Bad upstream JSON", { status: 502, headers });
+  }
+  out = out.replace(/^```(?:html)?\n?/i, "").replace(/\n?```$/i, "").trim();
+  return new Response(out, {
+    status: 200,
+    headers: { ...headers, "Content-Type": "text/html; charset=utf-8" }
+  });
+}

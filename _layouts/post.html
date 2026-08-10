@@ -11,9 +11,36 @@ layout: default
                 {% endfor %}
             </div>
             {% endif %}
-            <h1>{{ page.title }}</h1>
-            {% if page.subtitle %}<p class="sub">{{ page.subtitle }}</p>{% endif %}
+            <h1 class="post-title" data-title-en="{{ page.title | escape }}" {% if page.title_zh %}data-title-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}{% if page.wip %} <span class="wip-badge">WIP</span>{% endif %}</h1>
+            {% if page.subtitle %}<p class="sub post-sub" data-sub-en="{{ page.subtitle | escape }}" {% if page.subtitle_zh %}data-sub-zh="{{ page.subtitle_zh | escape }}"{% endif %}>{{ page.subtitle }}</p>{% endif %}
             <p class="meta">{{ page.date | date: "%B %-d, %Y" }} · {% if page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}</p>
+
+            {% if page.bilingual %}
+            <div class="lang-tabs post-i18n" role="tablist" aria-label="Language">
+                <button type="button" class="on" data-lang="en">EN</button>
+                <button type="button" data-lang="zh">中</button>
+            </div>
+            {% else %}
+            <div class="grok-translate">
+                <span class="grok-translate-label">Grok Translation</span>
+                <select class="tr-lang" aria-label="Target language">
+                    <option value="">Language…</option>
+                    <option value="English">English</option>
+                    <option value="Chinese (Simplified)">中文</option>
+                    <option value="Chinese (Traditional)">繁體中文</option>
+                    <option value="Japanese">日本語</option>
+                    <option value="Korean">한국어</option>
+                    <option value="Spanish">Español</option>
+                    <option value="French">Français</option>
+                    <option value="German">Deutsch</option>
+                    <option value="Portuguese">Português</option>
+                </select>
+                <input class="tr-custom" type="text" placeholder="or any language" autocomplete="off">
+                <button class="btn ghost tr-go" type="button">Translate</button>
+                <button class="btn ghost tr-reset" type="button" hidden>Original</button>
+                <span class="tr-status" hidden></span>
+            </div>
+            {% endif %}
         </div>
     </header>
     <div class="wrap">
@@ -39,3 +66,7 @@ layout: default
         {% endif %}
     </div>
 </article>
+{% if page.math %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+{% endif %}
+<script src="{{ site.baseurl }}/js/post-i18n.js"></script>

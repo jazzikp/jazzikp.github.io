@@ -496,6 +496,59 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
   font-family: var(--font-sans);
 }
 .lang-tabs button.on { color: var(--ink); border-color: var(--ink); }
+.post-hero .lang-tabs { margin: 16px 0 0; }
+.wip-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  vertical-align: middle;
+}
+.grok-translate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+.grok-translate-label {
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.grok-translate select,
+.grok-translate input {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+.grok-translate input { min-width: 140px; }
+.grok-translate .btn { padding: 6px 10px; font-size: 13px; }
+.tr-status { color: var(--muted); }
+.tr-status.is-err { color: var(--danger); }
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+  margin: 1.2em 0;
+}
+.prose th, .prose td {
+  border-bottom: 1px solid var(--line);
+  padding: 6px 8px;
+  text-align: left;
+}
+.prose th { font-family: var(--font-sans); font-size: 12px; color: var(--muted); }
 .timeline { list-style: none; padding: 0; margin: 24px 0; }
 .timeline li {
   display: grid;
