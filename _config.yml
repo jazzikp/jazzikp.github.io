@@ -66,15 +66,17 @@ kramdown:
   input: GFM
 
 
-# Comments
-gitalk:
+# Comments — Giscus (GitHub Discussions). Install the app once:
+# https://giscus.app  → repo jazzikp/jazzikp.github.io
+giscus:
   enable: true
-  clientID: 689ad5fe65e10d96c66a
-  clientSecret: 03d60c67e1f0fd6fe2d19ee7d1d20c6edf19c0a9
-  repo: jazzikp.github.io
-  owner: jazzikp
-  admin: jazzikp
-  distractionFreeMode: true
+  repo: jazzikp/jazzikp.github.io
+  repo_id: R_kgDOTzmRbA
+  category: General
+  category_id: DIC_kwDOTzmRbM4DDCP7
+
+gitalk:
+  enable: false
 
 
 # Analytics

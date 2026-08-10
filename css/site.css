@@ -339,6 +339,54 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 }
 .pager a { color: var(--muted); text-decoration: none; }
 
+.post-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 20px;
+  margin: 36px 0 8px;
+  padding: 16px 22px;
+  background: var(--bg-3);
+  border-radius: 16px;
+  font-family: var(--font-sans);
+}
+.post-nav a {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 46%;
+  text-decoration: none;
+  color: var(--ink);
+  min-width: 0;
+}
+.post-nav .next { align-items: flex-end; text-align: right; margin-left: auto; }
+.post-nav .dir {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.post-nav .ttl {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.post-nav a:hover .ttl { color: var(--accent); }
+.comments { padding: 12px 0 64px; }
+@media (max-width: 860px) {
+  .post-nav { flex-direction: column; }
+  .post-nav a,
+  .post-nav .next {
+    max-width: 100%;
+    align-items: flex-start;
+    text-align: left;
+    margin-left: 0;
+  }
+}
+
 /* Page / post */
 .page-hero, .post-hero { padding: 40px 0 8px; }
 .page-hero h1, .post-hero h1 {
