@@ -133,11 +133,10 @@ a { color: var(--accent); text-underline-offset: 3px; }
   font-family: var(--font-sans);
 }
 .theme-toggle {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  background: var(--surface);
+  width: 22px;
+  height: 22px;
+  border: 0;
+  background: none;
   color: var(--ink);
   display: inline-flex;
   align-items: center;
@@ -146,17 +145,14 @@ a { color: var(--accent); text-underline-offset: 3px; }
   padding: 0;
   flex: none;
 }
-.theme-toggle:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.theme-toggle:hover { color: var(--accent); }
 .theme-toggle:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .theme-icon {
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   display: none;
 }
 html:not([data-theme="dark"]) .theme-icon-moon { display: block; }
@@ -1019,8 +1015,7 @@ html[data-theme="dark"] body {
   background-attachment: fixed;
 }
 html[data-theme="dark"] .chat-panel,
-html[data-theme="dark"] .chat-hint,
-html[data-theme="dark"] .theme-toggle:hover {
+html[data-theme="dark"] .chat-hint {
   box-shadow: var(--shadow), var(--glow);
 }
 html[data-theme="dark"] .btn.primary,
