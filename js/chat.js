@@ -16,6 +16,40 @@
   var messages = [];
   var busy = false;
   var dock = document.querySelector(".chat-dock");
+  var scrollLockY = 0;
+  var mqPhone = window.matchMedia("(max-width: 860px)");
+
+  function isPhone() {
+    return mqPhone.matches;
+  }
+
+  function fitPanel() {
+    if (!isPhone() || !panel.classList.contains("open")) return;
+    var vv = window.visualViewport;
+    if (!vv) return;
+    panel.style.top = vv.offsetTop + "px";
+    panel.style.height = vv.height + "px";
+  }
+
+  function clearPanelFit() {
+    panel.style.top = "";
+    panel.style.height = "";
+  }
+
+  function lockPage() {
+    if (!isPhone()) return;
+    scrollLockY = window.scrollY || 0;
+    document.body.classList.add("chat-open");
+    document.body.style.top = "-" + scrollLockY + "px";
+    fitPanel();
+  }
+
+  function unlockPage() {
+    document.body.classList.remove("chat-open");
+    document.body.style.top = "";
+    clearPanelFit();
+    if (isPhone()) window.scrollTo(0, scrollLockY);
+  }
 
   function openChat() {
     panel.classList.add("open");
@@ -24,13 +58,21 @@
     if (!log.childElementCount) {
       addBubble("bot", "Hi, I'm Jazzik, ask me anything about my work or life.");
     }
-    input.focus();
+    lockPage();
+    if (!isPhone()) input.focus();
   }
 
   function closeChat() {
     panel.classList.remove("open");
     if (dock) dock.classList.remove("open");
+    unlockPage();
   }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", fitPanel);
+    window.visualViewport.addEventListener("scroll", fitPanel);
+  }
+  window.addEventListener("resize", fitPanel);
 
   document.querySelectorAll("[data-open-chat]").forEach(function (el) {
     el.addEventListener("click", function (e) {
