@@ -520,8 +520,7 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
   font-weight: 600;
   letter-spacing: 0.03em;
 }
-.grok-translate select,
-.grok-translate input {
+.grok-translate select {
   font: inherit;
   color: var(--ink);
   background: var(--surface);
@@ -529,7 +528,6 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
   border-radius: 4px;
   padding: 6px 8px;
 }
-.grok-translate input { min-width: 140px; }
 .grok-translate .btn { padding: 6px 10px; font-size: 13px; }
 .grok-translate.is-busy .tr-go { opacity: 0.55; pointer-events: none; }
 .tr-busy {

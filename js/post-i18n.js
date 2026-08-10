@@ -43,7 +43,6 @@
     if (!box || !article) return;
 
     var select = box.querySelector(".tr-lang");
-    var custom = box.querySelector(".tr-custom");
     var go = box.querySelector(".tr-go");
     var reset = box.querySelector(".tr-reset");
     var status = box.querySelector(".tr-status");
@@ -66,7 +65,7 @@
     }
 
     function targetLang() {
-      return (custom.value || "").trim() || (select && select.value) || "";
+      return (select && select.value) || "";
     }
 
     reset.addEventListener("click", function () {
