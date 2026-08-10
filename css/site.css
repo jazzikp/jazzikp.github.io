@@ -90,11 +90,17 @@ a { color: var(--accent); text-underline-offset: 3px; }
   align-items: center;
   gap: 8px;
 }
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: auto;
+}
 .brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-right: auto;
+  margin-right: 0;
   text-decoration: none;
   color: var(--ink);
   font-family: var(--font-sans);
@@ -133,8 +139,8 @@ a { color: var(--accent); text-underline-offset: 3px; }
   font-family: var(--font-sans);
 }
 .theme-toggle {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border: 0;
   background: none;
   color: var(--ink);
@@ -151,8 +157,8 @@ a { color: var(--accent); text-underline-offset: 3px; }
   outline-offset: 2px;
 }
 .theme-icon {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   display: none;
 }
 html:not([data-theme="dark"]) .theme-icon-moon { display: block; }
