@@ -1,0 +1,17 @@
+{
+  "name": "jlog-tests",
+  "private": true,
+  "type": "module",
+  "description": "Build, markup, SEO, performance and browser tests for jazzikp.github.io",
+  "scripts": {
+    "test": "node --test --test-reporter=spec ./*.test.mjs",
+    "test:fast": "node --test --test-reporter=spec ./build.test.mjs ./links.test.mjs ./markup.test.mjs ./seo.test.mjs ./perf.test.mjs",
+    "test:browser": "node --test --test-reporter=spec ./browser.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

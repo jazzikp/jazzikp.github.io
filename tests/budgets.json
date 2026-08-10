@@ -1,0 +1,20 @@
+{
+  "_comment": "Performance budgets, in bytes. These are the numbers the site shipped at, rounded up with a little headroom. If a change pushes past one, that is the signal to optimise rather than to raise the number — and if you do raise it, say why in the PR.",
+
+  "criticalPathBytes": 220000,
+  "criticalPathNote": "HTML + stylesheet + preloaded fonts + the LCP image on the home page, uncompressed.",
+
+  "stylesheetBytes": 40000,
+  "renderBlockingScriptBytes": 0,
+  "firstLoadScriptBytes": 6000,
+  "firstLoadScriptNote": "Only js/site.js runs on every page. chat.js, comments.js, post.js, lang.js and blogs.js are all loaded on demand.",
+
+  "maxImageBytes": 130000,
+  "maxImageNote": "img/social-card.jpg is the largest; it is never fetched by a browser, only by link unfurlers.",
+  "maxFontBytes": 40000,
+  "maxHtmlBytes": 60000,
+
+  "maxThirdPartyOrigins": 0,
+  "allowedDeferredThirdParty": ["cdnjs.cloudflare.com"],
+  "allowedDeferredThirdPartyNote": "MathJax, on maths posts only, and it must stay async."
+}
