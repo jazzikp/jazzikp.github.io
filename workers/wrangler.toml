@@ -7,7 +7,3 @@ workers_dev = true
 # Set the secret separately:
 #   npx wrangler secret put XAI_API_KEY
 
-[[kv_namespaces]]
-binding = "TRANSLATE_CACHE"
-id = "afcd6f27b84041198cad4e347ca4c2f4"
-

@@ -20,29 +20,6 @@ layout: default
                 <button type="button" class="on" data-lang="en">EN</button>
                 <button type="button" data-lang="zh">中</button>
             </div>
-            {% else %}
-            <div class="grok-translate">
-                <span class="grok-translate-label">Grok Translation</span>
-                <select class="tr-lang" aria-label="Target language">
-                    <option value="">Language…</option>
-                    <option value="English">English</option>
-                    <option value="Chinese (Simplified)">中文</option>
-                    <option value="Chinese (Traditional)">繁體中文</option>
-                    <option value="Japanese">日本語</option>
-                    <option value="Korean">한국어</option>
-                    <option value="Spanish">Español</option>
-                    <option value="French">Français</option>
-                    <option value="German">Deutsch</option>
-                    <option value="Portuguese">Português</option>
-                </select>
-                <button class="btn ghost tr-go" type="button">Translate</button>
-                <button class="btn ghost tr-reset" type="button" hidden>Original</button>
-                <span class="tr-busy" hidden>
-                    <span class="tr-spin" aria-hidden="true"></span>
-                    <span class="tr-busy-text">Translating…</span>
-                </span>
-                <span class="tr-status" hidden></span>
-            </div>
             {% endif %}
         </div>
     </header>
@@ -72,4 +49,6 @@ layout: default
 {% if page.math %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
 {% endif %}
+{% if page.bilingual %}
 <script src="{{ site.baseurl }}/js/post-i18n.js"></script>
+{% endif %}
