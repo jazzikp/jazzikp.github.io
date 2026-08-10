@@ -5,9 +5,7 @@ Machine learning engineer. Ranking, recommendation, ads ML, coding RL.
 
 ## Experience
 xAI — Member of Technical Staff (2025–present)
-- Recommendation foundation model: training, transformer architecture, and inference across search, organic, and ads. Large multi-GPU training. Reported CTR lift after unifying those surfaces.
-- Grok for ads: LLM task orchestration and post-event pipelines that feed ranking and generative systems.
-- Contributed to the Grok Coding RL model (training Grok to write, debug, and reason about real software).
+- Full-time on Grok Coding RL for Grok 4.5 and Grok 4.6: training Grok to write, debug, and reason about real software.
 
 Snap — Machine Learning Engineer, tech lead, product ads ranking (2023–2025)
 - LLM synthetic labels and content understanding for product ads.
