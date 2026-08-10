@@ -43,26 +43,6 @@ layout: default
 
     <section>
         <div class="section-head">
-            <h2>Projects</h2>
-            <a href="{{ site.baseurl }}/projects/">All projects</a>
-        </div>
-        <div class="project-grid home-projects">
-            {% assign featured = site.data.projects | where: "featured", true %}
-            {% for p in featured limit: 3 %}
-            <a class="project-card" href="{{ p.url }}" {% if p.url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
-                <div class="project-meta">
-                    <time>{{ p.year }}</time>
-                    <span class="project-kind">{{ p.kind }}</span>
-                </div>
-                <h3>{{ p.title }}</h3>
-                <p>{{ p.summary }}</p>
-            </a>
-            {% endfor %}
-        </div>
-    </section>
-
-    <section>
-        <div class="section-head">
             <h2>Blogs</h2>
             <a href="{{ site.baseurl }}/blogs/">Research notes</a>
         </div>
@@ -87,5 +67,25 @@ layout: default
             {% endif %}
         </ul>
         {% endif %}
+    </section>
+
+    <section>
+        <div class="section-head">
+            <h2>Projects</h2>
+            <a href="{{ site.baseurl }}/projects/">All projects</a>
+        </div>
+        <div class="project-grid home-projects">
+            {% assign featured = site.data.projects | where: "featured", true %}
+            {% for p in featured limit: 3 %}
+            <a class="project-card" href="{{ p.url }}" {% if p.url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
+                <div class="project-meta">
+                    <time>{{ p.year }}</time>
+                    <span class="project-kind">{{ p.kind }}</span>
+                </div>
+                <h3>{{ p.title }}</h3>
+                <p>{{ p.summary }}</p>
+            </a>
+            {% endfor %}
+        </div>
     </section>
 </div>
