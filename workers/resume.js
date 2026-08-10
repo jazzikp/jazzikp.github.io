@@ -31,7 +31,7 @@ Earlier: data science internship (promotion/sales modeling).
 
 ## Education
 - Georgia Tech, MS Computer Science (ML)
-- Stanford, AI Graduate Certificate
+- Stanford, AI Graduate Certificate (2022)
 - UIUC, MS Operations Research; BS Physics & Economics
 
 ## Also
