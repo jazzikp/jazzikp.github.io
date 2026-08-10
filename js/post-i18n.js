@@ -85,13 +85,15 @@
       })
         .then(function (res) {
           if (!res.ok) return res.text().then(function (t) { throw new Error(t || ("HTTP " + res.status)); });
-          return res.text();
+          return res.text().then(function (html) {
+            return { html: html, cached: (res.headers.get("X-Translate-Cache") || "") === "hit" };
+          });
         })
-        .then(function (html) {
-          if (!html || html.length < 20) throw new Error("Empty translation");
-          article.innerHTML = html;
+        .then(function (data) {
+          if (!data.html || data.html.length < 20) throw new Error("Empty translation");
+          article.innerHTML = data.html;
           reset.hidden = false;
-          setStatus("Translated into " + lang + ".");
+          setStatus(data.cached ? "From cache · " + lang : "Translated into " + lang + ".");
           if (window.MathJax && MathJax.Hub) MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         })
         .catch(function (err) {

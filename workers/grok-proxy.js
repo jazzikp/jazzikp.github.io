@@ -34,6 +34,7 @@ function corsHeaders(origin) {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Expose-Headers": "X-Translate-Cache",
     "Vary": "Origin"
   };
 }
@@ -106,6 +107,21 @@ export default {
   }
 };
 
+function htmlHeaders(headers, cache) {
+  return {
+    ...headers,
+    "Content-Type": "text/html; charset=utf-8",
+    "X-Translate-Cache": cache
+  };
+}
+
+async function cacheKey(target, html) {
+  const raw = "v1\n" + target + "\n" + html;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+  const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  return "tr:" + hex;
+}
+
 async function translate(request, env, headers) {
   if (!env.XAI_API_KEY) {
     return new Response("Missing XAI_API_KEY", { status: 500, headers });
@@ -116,13 +132,21 @@ async function translate(request, env, headers) {
   } catch {
     return new Response("Invalid JSON", { status: 400, headers });
   }
-  const target = typeof payload.target === "string" ? payload.target.trim().slice(0, 80) : "";
+  const target = typeof payload.target === "string"
+    ? payload.target.trim().slice(0, 80).replace(/\s+/g, " ")
+    : "";
   const html = typeof payload.html === "string" ? payload.html : "";
   if (!target || !html) {
     return new Response("Need target and html", { status: 400, headers });
   }
   if (html.length > 120000) {
     return new Response("Post too long to translate", { status: 413, headers });
+  }
+
+  const key = await cacheKey(target.toLowerCase(), html);
+  if (env.TRANSLATE_CACHE) {
+    const hit = await env.TRANSLATE_CACHE.get(key);
+    if (hit) return new Response(hit, { status: 200, headers: htmlHeaders(headers, "hit") });
   }
 
   const upstream = await fetch("https://api.x.ai/v1/chat/completions", {
@@ -159,8 +183,8 @@ async function translate(request, env, headers) {
     return new Response("Bad upstream JSON", { status: 502, headers });
   }
   out = out.replace(/^```(?:html)?\n?/i, "").replace(/\n?```$/i, "").trim();
-  return new Response(out, {
-    status: 200,
-    headers: { ...headers, "Content-Type": "text/html; charset=utf-8" }
-  });
+  if (out && env.TRANSLATE_CACHE) {
+    await env.TRANSLATE_CACHE.put(key, out, { expirationTtl: 60 * 60 * 24 * 180 });
+  }
+  return new Response(out, { status: 200, headers: htmlHeaders(headers, "miss") });
 }
