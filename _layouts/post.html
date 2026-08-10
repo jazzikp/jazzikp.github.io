@@ -47,25 +47,24 @@ layout: default
         </nav>
         {% endif %}
 
-        {% if site.giscus.enable %}
-        <div class="comments">
-            <script src="https://giscus.app/client.js"
-                data-repo="{{ site.giscus.repo }}"
-                data-repo-id="{{ site.giscus.repo_id }}"
-                data-category="{{ site.giscus.category }}"
-                data-category-id="{{ site.giscus.category_id }}"
-                data-mapping="pathname"
-                data-strict="0"
-                data-reactions-enabled="1"
-                data-emit-metadata="0"
-                data-input-position="bottom"
-                data-theme="preferred_color_scheme"
-                data-lang="en"
-                data-loading="lazy"
-                crossorigin="anonymous"
-                async>
-            </script>
-        </div>
+        {% if site.comments.enable %}
+        <section class="comments" id="comments" data-slug="{{ page.url }}">
+            <h2>Comments</h2>
+            <div class="comment-list" id="comment-list">Loading…</div>
+            <form class="comment-form" id="comment-form">
+                <label>Name
+                    <input name="name" type="text" maxlength="40" required autocomplete="name">
+                </label>
+                <label class="hp" aria-hidden="true">Website
+                    <input name="website" type="text" tabindex="-1" autocomplete="off">
+                </label>
+                <label>Comment
+                    <textarea name="body" rows="4" maxlength="2000" required></textarea>
+                </label>
+                <button class="btn primary" type="submit">Post comment</button>
+                <p class="comment-status" id="comment-status" hidden></p>
+            </form>
+        </section>
         {% endif %}
     </div>
 </article>
@@ -74,4 +73,7 @@ layout: default
 {% endif %}
 {% if page.bilingual %}
 <script src="{{ site.baseurl }}/js/post-i18n.js"></script>
+{% endif %}
+{% if site.comments.enable %}
+<script src="{{ site.baseurl }}/js/comments.js"></script>
 {% endif %}

@@ -66,17 +66,8 @@ kramdown:
   input: GFM
 
 
-# Comments — Giscus (GitHub Discussions). Install the app once:
-# https://giscus.app  → repo jazzikp/jazzikp.github.io
-giscus:
+comments:
   enable: true
-  repo: jazzikp/jazzikp.github.io
-  repo_id: R_kgDOTzmRbA
-  category: General
-  category_id: DIC_kwDOTzmRbM4DDCP7
-
-gitalk:
-  enable: false
 
 
 # Analytics

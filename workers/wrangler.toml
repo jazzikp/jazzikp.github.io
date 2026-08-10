@@ -7,3 +7,8 @@ workers_dev = true
 # Set the secret separately:
 #   npx wrangler secret put XAI_API_KEY
 
+[[d1_databases]]
+binding = "DB"
+database_name = "jlog-comments"
+database_id = "43872bea-11d2-4647-8f5d-7d2ae357232c"
+
