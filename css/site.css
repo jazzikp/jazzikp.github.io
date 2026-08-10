@@ -531,6 +531,26 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 }
 .grok-translate input { min-width: 140px; }
 .grok-translate .btn { padding: 6px 10px; font-size: 13px; }
+.grok-translate.is-busy .tr-go { opacity: 0.55; pointer-events: none; }
+.tr-busy {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.tr-spin {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: tr-rotate 0.7s linear infinite;
+  flex: none;
+}
+@keyframes tr-rotate { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .tr-spin { animation: none; border-top-color: var(--line); background: var(--accent); }
+}
 .tr-status { color: var(--muted); }
 .tr-status.is-err { color: var(--danger); }
 .prose table {

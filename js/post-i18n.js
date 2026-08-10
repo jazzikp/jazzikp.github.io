@@ -47,9 +47,16 @@
     var go = box.querySelector(".tr-go");
     var reset = box.querySelector(".tr-reset");
     var status = box.querySelector(".tr-status");
+    var busyEl = box.querySelector(".tr-busy");
     var original = article.innerHTML;
     var proxy = (window.GROK_PROXY || "").replace(/\/$/, "");
     var busy = false;
+
+    function setBusy(on) {
+      box.classList.toggle("is-busy", on);
+      if (busyEl) busyEl.hidden = !on;
+      go.disabled = on;
+    }
 
     function setStatus(text, isErr) {
       if (!status) return;
@@ -76,8 +83,8 @@
         return;
       }
       busy = true;
-      go.disabled = true;
-      setStatus("Translating…");
+      setStatus("");
+      setBusy(true);
       fetch(proxy + "/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -101,7 +108,7 @@
         })
         .then(function () {
           busy = false;
-          go.disabled = false;
+          setBusy(false);
         });
     });
   });

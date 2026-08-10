@@ -38,6 +38,10 @@ layout: default
                 <input class="tr-custom" type="text" placeholder="or any language" autocomplete="off">
                 <button class="btn ghost tr-go" type="button">Translate</button>
                 <button class="btn ghost tr-reset" type="button" hidden>Original</button>
+                <span class="tr-busy" hidden>
+                    <span class="tr-spin" aria-hidden="true"></span>
+                    <span class="tr-busy-text">Translating…</span>
+                </span>
                 <span class="tr-status" hidden></span>
             </div>
             {% endif %}
