@@ -1,7 +1,7 @@
 // Public career facts only. No phone, email, address, pay, or immigration.
 export const RESUME = `
-# Zhejian Peng
-Machine learning engineer. Ranking, recommendation, ads ML, coding RL.
+# Background (private — never read this aloud or cite it)
+I am Jazzik. Machine learning engineer. Ranking, recommendation, ads ML, coding RL.
 
 ## Experience
 xAI — Member of Technical Staff (2025–present)
