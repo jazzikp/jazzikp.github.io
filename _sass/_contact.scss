@@ -1,0 +1,52 @@
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 8px 0 72px;
+  max-width: 560px;
+}
+.consult-card, .hello-card {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 24px;
+  background: var(--surface);
+}
+.consult-card h2, .hello-card h2 {
+  font-size: 24px;
+  margin: 0 0 10px;
+}
+.consult-card p, .hello-card p { color: var(--muted); }
+.consult-meta {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 20px;
+}
+.consult-meta li { padding: 8px 0; border-top: 1px solid var(--line); font-size: 16px; }
+.consult-meta strong {
+  color: var(--accent);
+  margin-right: 8px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+}
+.consult-form { display: grid; gap: 12px; }
+.consult-form label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); font-family: var(--font-sans); }
+.consult-form input, .consult-form textarea {
+  width: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font: inherit;
+}
+.fine { font-size: 13px; font-family: var(--font-sans); }
+.tally-frame {
+  width: 100%;
+  min-height: 420px;
+  border: 0;
+  border-radius: 4px;
+  background: var(--surface);
+}

@@ -1,9 +1,29 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="description" content="{{ site.description }}">
-    <meta name="keywords" content="{{ site.keyword }}">
-    <meta name="author" content="{{ site.author }}">
+    <title>{% if page.title %}{{ page.title }} · {{ site.SEOTitle }}{% else %}{{ site.SEOTitle }}{% endif %}</title>
+
+    {%- comment -%}
+      Styles and fonts come first so the browser's preload scanner can start
+      fetching them before it parses anything else. Fonts are self-hosted, so
+      there is no third-party DNS lookup or TLS handshake on the critical path.
+      Only the three faces used above the fold are preloaded; the italic and
+      mono cuts load on demand through font-display: swap.
+    {%- endcomment -%}
+    <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/source-serif-4-400-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/source-serif-4-600-latin.woff2" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/source-sans-3-600-latin.woff2" crossorigin>
+    <link rel="stylesheet" href="{{ site.baseurl }}/css/site.css?v={{ site.asset_version }}">
+    {%- if page.preload_image %}
+    <link rel="preload" as="image" href="{{ site.baseurl }}{{ page.preload_image }}" fetchpriority="high">
+    {%- endif %}
+
+    {%- comment -%}
+      Applies the saved theme before first paint so dark-mode visitors never
+      see a white flash. Kept inline and tiny on purpose. The theme-color meta
+      must be declared above it — the script rewrites that tag, and it can only
+      find elements the parser has already reached.
+    {%- endcomment -%}
     <meta name="theme-color" content="#f7f5f0">
     <script>
     (function () {
@@ -19,14 +39,14 @@
       } catch (e) {}
     })();
     </script>
-    <title>{% if page.title %}{{ page.title }} · {{ site.SEOTitle }}{% else %}{{ site.SEOTitle }}{% endif %}</title>
-    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
-    <link rel="shortcut icon" href="{{ site.baseurl }}/img/avatar-anime.jpg">
+
+    {% include seo.html %}
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ site.baseurl }}/img/favicon-32.png">
     <link rel="apple-touch-icon" href="{{ site.baseurl }}/img/apple-touch-icon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ site.baseurl }}/css/syntax.css">
-    <link rel="stylesheet" href="{{ site.baseurl }}/css/site.css?v=23">
-    <script>window.GROK_PROXY = "{{ site.grok.proxy_url }}";</script>
+    <link rel="manifest" href="{{ site.baseurl }}/pwa/manifest.json">
+    <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ site.baseurl }}/feed.xml">
+
+    <script defer src="{{ site.baseurl }}/js/site.js?v={{ site.asset_version }}"></script>
+    <script>window.GROK_PROXY = {{ site.grok.proxy_url | jsonify }};</script>
 </head>

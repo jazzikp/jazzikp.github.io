@@ -1,0 +1,22 @@
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92em;
+  margin: 1.2em 0;
+}
+.prose th, .prose td {
+  border-bottom: 1px solid var(--line);
+  padding: 6px 8px;
+  text-align: left;
+}
+.prose th { font-family: var(--font-sans); font-size: 12px; color: var(--muted); }
+.timeline { list-style: none; padding: 0; margin: 24px 0; }
+.timeline li {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.timeline b { color: var(--accent); font-weight: 600; }
+

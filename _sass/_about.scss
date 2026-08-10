@@ -1,0 +1,115 @@
+/* About */
+.about-grid {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 36px;
+  padding: 12px 0 8px;
+}
+.about-photo {
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+.career-wrap { padding-bottom: 72px; }
+.career-title {
+  font-size: 22px;
+  margin: 24px 0 20px;
+}
+.career {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+.career::before {
+  content: "";
+  position: absolute;
+  left: 72px;
+  top: 8px;
+  bottom: 16px;
+  width: 1px;
+  background: var(--line);
+}
+.career-item {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 28px;
+  padding: 0 0 26px;
+  position: relative;
+}
+.career-item::before {
+  content: "";
+  position: absolute;
+  left: 68px;
+  top: 8px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+}
+.career-item time {
+  color: var(--accent);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  padding-top: 2px;
+}
+.career-item h3 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+}
+.career-item h3 span {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+.career-item p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 4px 0 0;
+  margin: 0;
+  font-family: var(--font-sans);
+}
+.chips li {
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 4px 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.lang-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+.lang-tabs button {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 3px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+.lang-tabs button.on { color: var(--ink); border-color: var(--ink); }
+.post-hero .lang-tabs { margin: 16px 0 0; }
+.wip-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  vertical-align: middle;
+}

@@ -1,40 +1,67 @@
-# Site settings
+# ---------------------------------------------------------------------------
+# Site identity
+# ---------------------------------------------------------------------------
 title: J'Log
 SEOTitle: J'Log | Zhejian Peng
-header-img: img/post-bg-desk.jpg
 author: Zhejian Peng
 description: "J'Log — a blog by Zhejian Peng on ranking, recommendation, and Grok Coding RL."
 keyword: "J'Log, Zhejian Peng, Grok Coding RL, Recommendation System, Ads Ranking, Machine Learning"
 url: "https://jazzikp.github.io"
 baseurl: ""
+lang: en
+
 github_repo: "https://github.com/jazzikp/jazzikp.github.io"
 github_reponame: "jazzikp.github.io"
 
-# Sidebar settings
-sidebar: true
-sidebar-about-description: "Ads ranking, recommendation, and Grok Coding RL."
-sidebar-avatar: /img/about.jpg
 
-
-# SNS settings
-RSS: false
+# ---------------------------------------------------------------------------
+# Social accounts — read by _includes/socials.html and the SEO tags
+# ---------------------------------------------------------------------------
 github_username: jazzikp
 linkedin_username: zhejian-peng
 twitter_username: zjpeng94
 instagram_username: jazzik_peng
-youtube_username: channel/UCR7ohymZdzclHCyr6YZW9vQ
 
 
-# Build settings
+# ---------------------------------------------------------------------------
+# Build
+# ---------------------------------------------------------------------------
 permalink: pretty
 paginate: 10
-exclude: ["less", "node_modules", "Gruntfile.js", "package.json", "README.md", "vendor", "Gemfile", "Gemfile.lock", "workers", "scripts"]
-anchorjs: true
+plugins: [jekyll-paginate, jekyll-sitemap]
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+
+# One stylesheet, minified. Partials live in _sass/, wired up by css/site.scss.
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# Appended to css/ and js/ URLs, and names the service worker's caches.
+# Bump it whenever a stylesheet or script changes so returning visitors get the
+# new file instead of a cached one.
+asset_version: 24
+
+exclude:
+  - node_modules
+  - package.json
+  - package-lock.json
+  - README.md
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+  - workers
+  - scripts
+  - tests
+  - img/src          # full-resolution originals; scripts/optimize-images.sh derives what ships
 
 
-# Gems
-plugins: [jekyll-paginate]
-
+# ---------------------------------------------------------------------------
+# Content
+# ---------------------------------------------------------------------------
 collections:
   reports:
     output: true
@@ -48,8 +75,12 @@ defaults:
       layout: report
       author: Zhejian Peng
 
-# Paid consult — GitHub Pages cannot take cards itself.
-# Best: Tally form with Stripe, or a Stripe / Lemon Squeezy checkout link.
+comments:
+  enable: true
+
+# Consultation block on /contact/. GitHub Pages cannot take payments itself:
+# set tally_embed for an embedded form, or checkout_url for Stripe / Lemon
+# Squeezy. With both blank the page falls back to a LinkedIn link.
 consult:
   enabled: true
   price: ""
@@ -59,47 +90,18 @@ consult:
   tally_embed: ""
 
 
-# Markdown settings
-markdown: kramdown
-highlighter: rouge
-kramdown:
-  input: GFM
+# ---------------------------------------------------------------------------
+# Progressive web app
+# ---------------------------------------------------------------------------
+# sw.js is network-first for HTML, so a deploy is always visible on the next
+# load. To retire it for people who already have it installed, set KILL_SWITCH
+# in sw.js to true and deploy once before turning this off.
+service-worker: true
 
 
-comments:
-  enable: true
-
-
-# Analytics
-ga_track_id: 'UA-137525491-1'
-ga_domain: auto
-
-
-# Featured Tags
-featured-tags: true
-featured-condition-size: 1
-
-
-# Progressive Web Apps
-chrome-tab-theme-color: "#111111"
-service-worker: false
-
-# Grok chat — proxy keeps the API key off this public site.
-# Deploy workers/grok-proxy.js, then put the worker URL here.
+# ---------------------------------------------------------------------------
+# Grok chat — the proxy keeps the API key off this public site.
+# Deploy workers/grok-proxy.js, then point this at the worker URL.
+# ---------------------------------------------------------------------------
 grok:
   proxy_url: "https://zhejian-grok-proxy.jazzikp.workers.dev"
-
-
-# Friends / links
-friends: [
-    {
-        title: "GitHub",
-        href: "https://github.com/jazzikp"
-    },{
-        title: "LinkedIn",
-        href: "https://www.linkedin.com/in/zhejian-peng/"
-    },{
-        title: "X",
-        href: "https://x.com/zjpeng94"
-    }
-]

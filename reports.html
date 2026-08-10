@@ -11,7 +11,7 @@ permalink: /reports/
     <a class="post-card" href="{{ report.url | prepend: site.baseurl }}">
         <time>{% if report.date %}{{ report.date | date: "%b %Y" }}{% else %}Report{% endif %}</time>
         <div>
-            <h3>{{ report.title }}</h3>
+            <h2>{{ report.title }}</h2>
             {% if report.subtitle %}<p>{{ report.subtitle }}</p>{% endif %}
         </div>
     </a>
@@ -21,7 +21,7 @@ permalink: /reports/
     <div class="post-card is-soon">
         <time>{{ item.eta }}</time>
         <div>
-            <h3>{{ item.title }}</h3>
+            <h2>{{ item.title }}</h2>
             <p>{{ item.subtitle }}</p>
         </div>
     </div>

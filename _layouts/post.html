@@ -1,6 +1,14 @@
 ---
 layout: default
 ---
+{%- comment -%}
+  Reading time, computed at build time so no JavaScript is needed for it.
+  200 wpm is the usual English prose figure; Chinese posts read faster per
+  "word" as Jekyll counts them, but the estimate stays in the right ballpark.
+{%- endcomment -%}
+{%- assign words = content | strip_html | number_of_words -%}
+{%- assign minutes = words | divided_by: 200 | plus: 1 -%}
+
 <article>
     <header class="post-hero">
         <div class="wrap">
@@ -13,12 +21,16 @@ layout: default
             {% endif %}
             <h1 class="post-title" data-title-en="{{ page.title | escape }}" {% if page.title_zh %}data-title-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}{% if page.wip %} <span class="wip-badge">WIP</span>{% endif %}</h1>
             {% if page.subtitle %}<p class="sub post-sub" data-sub-en="{{ page.subtitle | escape }}" {% if page.subtitle_zh %}data-sub-zh="{{ page.subtitle_zh | escape }}"{% endif %}>{{ page.subtitle }}</p>{% endif %}
-            <p class="meta">{{ page.date | date: "%B %-d, %Y" }} · {% if page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}</p>
+            <p class="meta">
+                <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+                · {% if page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}
+                · {{ minutes }} min read
+            </p>
 
             {% if page.bilingual %}
             <div class="lang-tabs post-i18n" role="tablist" aria-label="Language">
-                <button type="button" class="on" data-lang="en">EN</button>
-                <button type="button" data-lang="zh">中</button>
+                <button type="button" class="on" role="tab" aria-selected="true" data-lang="en">EN</button>
+                <button type="button" role="tab" aria-selected="false" data-lang="zh">中</button>
             </div>
             {% endif %}
         </div>
@@ -31,7 +43,7 @@ layout: default
         {% if page.previous or page.next %}
         <nav class="post-nav" aria-label="More posts">
             {% if page.previous %}
-            <a class="prev" href="{{ page.previous.url | prepend: site.baseurl }}">
+            <a class="prev" href="{{ page.previous.url | prepend: site.baseurl }}" rel="prev">
                 <span class="dir">«</span>
                 <span class="ttl">{{ page.previous.title }}</span>
             </a>
@@ -39,7 +51,7 @@ layout: default
             <span></span>
             {% endif %}
             {% if page.next %}
-            <a class="next" href="{{ page.next.url | prepend: site.baseurl }}">
+            <a class="next" href="{{ page.next.url | prepend: site.baseurl }}" rel="next">
                 <span class="dir">»</span>
                 <span class="ttl">{{ page.next.title }}</span>
             </a>
@@ -68,12 +80,40 @@ layout: default
         {% endif %}
     </div>
 </article>
+
 {% if page.math %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
 {% endif %}
 {% if page.bilingual %}
-<script src="{{ site.baseurl }}/js/post-i18n.js"></script>
+<script defer src="{{ site.baseurl }}/js/lang.js?v={{ site.asset_version }}"></script>
 {% endif %}
+<script defer src="{{ site.baseurl }}/js/post.js?v={{ site.asset_version }}"></script>
+
 {% if site.comments.enable %}
-<script src="{{ site.baseurl }}/js/comments.js"></script>
+<script>
+// Comments sit at the bottom of long posts and most readers never scroll that
+// far, so the script — and the cross-origin request it makes — waits until the
+// section is close to the viewport.
+(function () {
+  var section = document.getElementById("comments");
+  if (!section) return;
+  var src = {{ site.baseurl | append: "/js/comments.js?v=" | append: site.asset_version | jsonify }};
+  function load() {
+    var s = document.createElement("script");
+    s.src = src;
+    document.head.appendChild(s);
+  }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) {
+        io.disconnect();
+        load();
+      }
+    }, { rootMargin: "600px" });
+    io.observe(section);
+  } else {
+    load();
+  }
+})();
+</script>
 {% endif %}

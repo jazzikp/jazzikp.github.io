@@ -4,6 +4,8 @@ title: Write
 description: Draft a report or blog post in the browser and publish it to this repo.
 eyebrow: J'Log
 permalink: /write/
+sitemap: false
+robots: noindex, nofollow
 ---
 <div class="write-app">
     <p class="fine">GitHub Pages has no database. This editor commits markdown into <code>jazzikp.github.io</code>. Use a fine-grained token with Contents: Read and write on that repo only. It stays in this browser tab.</p>
@@ -58,4 +60,4 @@ window.WRITE = {
     author: "{{ site.author }}"
 };
 </script>
-<script src="{{ site.baseurl }}/js/write.js"></script>
+<script defer src="{{ site.baseurl }}/js/write.js?v={{ site.asset_version }}"></script>
