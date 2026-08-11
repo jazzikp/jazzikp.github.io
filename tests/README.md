@@ -23,6 +23,7 @@ npm test
 | `markup.test.mjs` | One `<h1>` per page, no skipped heading ranks, alt text and intrinsic dimensions on every image, lazy loading in prose, `rel="noopener"` on new-tab links, a skip link on every page, and a correct `lang`. |
 | `seo.test.mjs` | Titles and descriptions present, distinct and not over-long; canonical URLs absolute and self-consistent; complete Open Graph and Twitter cards; JSON-LD that parses and uses the right schema type; utility pages marked `noindex`. |
 | `perf.test.mjs` | Byte budgets from `budgets.json`: critical path, stylesheet, first-load JavaScript, per-asset ceilings, total site size. Also asserts no render-blocking or third-party resources and that fonts stay self-hosted. |
+| `math.test.mjs` | Posts use `$$…$$` rather than raw `\(…\)`, which kramdown silently strips; no unrendered LaTeX survives into the prose; MathJax is loaded (and async) wherever maths appears; and the number of expressions written matches the number that reach the page. |
 | `browser.test.mjs` | Real Chromium: no console errors, theme toggle and persistence, lazy chat, blog search and tag filters, language toggle, copy buttons, heading anchors, lazy comments, image distortion, layout shift, mobile overflow, keyboard focus order, and offline rendering through the service worker. |
 
 The chat and comments backend is stubbed with Playwright routing, so the suite

@@ -90,6 +90,13 @@ and the nav. The rest is loaded only when it is needed — `chat.js` on the firs
 click of "Ask Jazzik", `comments.js` when the comment section nears the
 viewport, `post.js` and `lang.js` only on the pages that use them.
 
+**Maths in posts.** Write `$$…$$` and nothing else. Kramdown parses it as
+maths and emits the delimiter MathJax expects, picking inline or display from
+the context — `$$x$$` mid-sentence becomes inline, `$$` on its own lines becomes
+a centred block. Do not write `\(x\)` directly: kramdown reads the backslash as
+a Markdown escape, strips it, and MathJax is handed a plain `(x)` it will never
+render. That failure is silent, so `tests/math.test.mjs` checks for it.
+
 **Caching.** `asset_version` in `_config.yml` is appended to every CSS and JS
 URL and names the service worker's caches. Bump it whenever you change a
 stylesheet or a script, otherwise returning visitors keep the old file.

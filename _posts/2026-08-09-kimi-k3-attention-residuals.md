@@ -29,9 +29,9 @@ This is **part 1** of a longer note on the Kimi K3 / KDA stack. KDA itself is th
 
 A PreNorm residual looks innocent:
 
-\\[
+$$
 h_l = h_{l-1} + f_l(h_{l-1}) = h_0 + \sum_{i=1}^{l} f_i(h_{i-1})
-\\]
+$$
 
 Every earlier layer is added with **weight 1**. Depth is an RNN: all history is crushed into one vector. Hidden-state size grows with depth, so each new layer is a smaller and smaller fraction of the stream — PreNorm dilution. Early information cannot be fetched back on demand.
 
@@ -43,32 +43,32 @@ The paper’s claim, in one line: standard residuals (and Highway-style gates) a
 
 ### Standard
 
-Each layer only sees \(h_{l-1}\). Mixing weights are fixed. Cheap: one hidden state between layers. This is \(N = 1\) in the block picture (embedding isolated as its own source).
+Each layer only sees $$h_{l-1}$$. Mixing weights are fixed. Cheap: one hidden state between layers. This is $$N = 1$$ in the block picture (embedding isolated as its own source).
 
 ### Full AttnRes
 
-\\[
+$$
 h_l = \sum_{i=0}^{l-1} \alpha_{i \to l}\, v_i, \qquad
 \alpha_{i \to l} = \mathrm{softmax}_i\big(w_l^\top \mathrm{RMSNorm}(k_i)\big)
-\\]
+$$
 
-- \(w_l \in \mathbb{R}^d\): one **learned pseudo-query per layer**, decoupled from that layer’s forward pass
+- $$w_l \in \mathbb{R}^d$$: one **learned pseudo-query per layer**, decoupled from that layer’s forward pass
 - Softmax over **all previous layer outputs**, so the mix is content-dependent
-- Compute \(O(L^2 d)\), store \(O(L d)\)
+- Compute $$O(L^2 d)$$, store $$O(L d)$$
 - At small scale, almost free: those activations are already kept for backprop
-- At large scale, **pipeline + rematerialization** must ship every layer output across stages — that \(O(Ld)\) traffic is the real cost
+- At large scale, **pipeline + rematerialization** must ship every layer output across stages — that $$O(Ld)$$ traffic is the real cost
 - Queries start at **zero**, so training begins as a uniform average and does not spike
 
 ### Block AttnRes (what the 48B run actually uses)
 
-Split \(L\) layers into \(N\) blocks:
+Split $$L$$ layers into $$N$$ blocks:
 
 - **Inside a block:** ordinary residual, collapsed to one block vector
-- **Across blocks:** Full AttnRes over the \(N\) summaries + the embedding
+- **Across blocks:** Full AttnRes over the $$N$$ summaries + the embedding
 - The unfinished block also exposes a **partial sum**
-- Memory / communication drops from \(O(Ld)\) to \(O(Nd)\)
-- Extremes: \(N = L\) is Full; \(N = 1\) is Standard
-- Empirically, **\(N \approx 8\) recovers most of Full**
+- Memory / communication drops from $$O(Ld)$$ to $$O(Nd)$$
+- Extremes: $$N = L$$ is Full; $$N = 1$$ is Standard
+- Empirically, **$$N \approx 8$$ recovers most of Full**
 
 Kimi Linear 48B setup: 27 Transformer blocks (54 layers), **6 layers per AttnRes block → 9 blocks + embedding = 10 depth sources**.
 
@@ -79,16 +79,16 @@ Systems extras: cache across pipeline stages, two-phase inference + online softm
 | What it sees | Only the running sum | Every prior layer output | Block summaries + partial |
 | Weights | Fixed 1 | Learned softmax | Same, fewer sources |
 | Depth selection | None | Finest | Close to Full |
-| Extra store / ship | \(O(d)\) | \(O(Ld)\) | \(O(Nd)\) |
+| Extra store / ship | $$O(d)$$ | $$O(Ld)$$ | $$O(Nd)$$ |
 | Role in the paper | Baseline | Upper bound | The version that scales |
 
-Per-token per-layer residual I/O (Table 1): Standard \(\sim 3d\), Block \(\sim 5.5d\), mHC (\(m=4\)) \(\sim 34d\). Block is much cheaper than mHC.
+Per-token per-layer residual I/O (Table 1): Standard $$\sim 3d$$, Block $$\sim 5.5d$$, mHC ($$m=4$$) $$\sim 34d$$. Block is much cheaper than mHC.
 
 ## Experiments
 
 ### Scaling law
 
-Five sizes. Each size: Baseline / Block (\(N=8\)) / Full. Same hparams as the baseline on purpose — a conservative test.
+Five sizes. Each size: Baseline / Block ($$N=8$$) / Full. Same hparams as the baseline on purpose — a conservative test.
 
 - Slopes are similar; AttnRes is **lower loss on the whole compute curve**
 - Largest size: **Baseline 1.719, Block 1.693, Full 1.692** (Full vs Block: 0.001)
@@ -133,7 +133,7 @@ Knowledge moves a little. **Multi-step reasoning and code move a lot** — consi
 | input-independent mixing | 1.749 |
 | sigmoid instead of softmax | 1.741 |
 | no RMSNorm | 1.743 |
-| Block \(S=4\) | 1.746 |
+| Block $$S=4$$ | 1.746 |
 
 Fixed mixing is clearly worse than learned softmax — **content-dependent depth selection is doing real work**. Block is a bit behind Full, still well above baseline.
 
@@ -157,9 +157,9 @@ Paper: [Attention Residuals, arXiv:2603.15031](https://arxiv.org/abs/2603.15031)
 
 PreNorm residual 看起来无害：
 
-\\[
+$$
 h_l = h_{l-1} + f_l(h_{l-1}) = h_0 + \sum_{i=1}^{l} f_i(h_{i-1})
-\\]
+$$
 
 前面每一层都以 **权重 1** 加进去。深度方向像 RNN：历史被压成一个向量。hidden 幅度随深度涨，新层占的份额越来越小 —— 这就是 PreNorm dilution。早期信息没法按内容再取回来。
 
@@ -171,32 +171,32 @@ h_l = h_{l-1} + f_l(h_{l-1}) = h_0 + \sum_{i=1}^{l} f_i(h_{i-1})
 
 ### Standard
 
-每层只看见 \(h_{l-1}\)。混合权重固定。便宜：层间只传一个 hidden。在 block 图里，这就是 \(N = 1\)（embedding 单独作为一个 source）。
+每层只看见 $$h_{l-1}$$。混合权重固定。便宜：层间只传一个 hidden。在 block 图里，这就是 $$N = 1$$（embedding 单独作为一个 source）。
 
 ### Full AttnRes
 
-\\[
+$$
 h_l = \sum_{i=0}^{l-1} \alpha_{i \to l}\, v_i, \qquad
 \alpha_{i \to l} = \mathrm{softmax}_i\big(w_l^\top \mathrm{RMSNorm}(k_i)\big)
-\\]
+$$
 
-- \(w_l \in \mathbb{R}^d\)：每层一个 **学出来的 pseudo-query**，和本层 forward 解耦
+- $$w_l \in \mathbb{R}^d$$：每层一个 **学出来的 pseudo-query**，和本层 forward 解耦
 - 对 **所有前面层的 output** 做 softmax，混合随内容变
-- 计算 \(O(L^2 d)\)，存储 \(O(L d)\)
+- 计算 $$O(L^2 d)$$，存储 $$O(L d)$$
 - 小规模几乎免费：这些 activation 反正要给 backprop 留着
-- 大规模：**pipeline + rematerialization** 必须把每层 output 跨 stage 传 —— \(O(Ld)\) 通信才是痛点
+- 大规模：**pipeline + rematerialization** 必须把每层 output 跨 stage 传 —— $$O(Ld)$$ 通信才是痛点
 - query **零初始化**，开训接近均匀平均，不会一上来就炸
 
 ### Block AttnRes（48B 实验真正用的）
 
-把 \(L\) 层切成 \(N\) 个 block：
+把 $$L$$ 层切成 $$N$$ 个 block：
 
 - **block 内：** 还是普通 residual，压成一个 block 向量
-- **block 间：** 只对 \(N\) 个摘要 + embedding 做 Full AttnRes
+- **block 间：** 只对 $$N$$ 个摘要 + embedding 做 Full AttnRes
 - 当前还没走完的 block，再多看一个 **partial sum**
-- 内存 / 通信从 \(O(Ld)\) 降到 \(O(Nd)\)
-- 两个极端：\(N = L\) 就是 Full；\(N = 1\) 就是 Standard
-- 经验上 **\(N \approx 8\) 就能拿回 Full 的大部分收益**
+- 内存 / 通信从 $$O(Ld)$$ 降到 $$O(Nd)$$
+- 两个极端：$$N = L$$ 就是 Full；$$N = 1$$ 就是 Standard
+- 经验上 **$$N \approx 8$$ 就能拿回 Full 的大部分收益**
 
 Kimi Linear 48B：27 个 Transformer block（54 层），**每个 AttnRes block 6 层 → 9 个 block + embedding = 10 个 depth source**。
 
@@ -207,16 +207,16 @@ Kimi Linear 48B：27 个 Transformer block（54 层），**每个 AttnRes block 
 | 看见谁 | 只有累加和 | 每一层的 output | block 摘要 + partial |
 | 权重 | 固定 1 | 学出来的 softmax | 同上，source 更少 |
 | 深度选择 | 无 | 最细 | 接近 Full |
-| 额外存 / 传 | \(O(d)\) | \(O(Ld)\) | \(O(Nd)\) |
+| 额外存 / 传 | $$O(d)$$ | $$O(Ld)$$ | $$O(Nd)$$ |
 | 论文定位 | baseline | 上限 | 能上大规模的折中 |
 
-每 token 每层 residual I/O（Table 1）：Standard \(\sim 3d\)，Block \(\sim 5.5d\)，mHC（\(m=4\)）\(\sim 34d\)。Block 比 mHC 省很多带宽。
+每 token 每层 residual I/O（Table 1）：Standard $$\sim 3d$$，Block $$\sim 5.5d$$，mHC（$$m=4$$）$$\sim 34d$$。Block 比 mHC 省很多带宽。
 
 ## 实验
 
 ### Scaling law
 
-五个规模。每档：Baseline / Block（\(N=8\)）/ Full。超参按 baseline 选 —— 对 AttnRes 更苛刻。
+五个规模。每档：Baseline / Block（$$N=8$$）/ Full。超参按 baseline 选 —— 对 AttnRes 更苛刻。
 
 - 斜率差不多；AttnRes **整条 compute 曲线 loss 都更低**
 - 最大档：**Baseline 1.719，Block 1.693，Full 1.692**（Full 和 Block 只差 0.001）
@@ -261,7 +261,7 @@ Kimi Linear 48B：27 个 Transformer block（54 层），**每个 AttnRes block 
 | input-independent mixing | 1.749 |
 | sigmoid 代替 softmax | 1.741 |
 | 去掉 RMSNorm | 1.743 |
-| Block \(S=4\) | 1.746 |
+| Block $$S=4$$ | 1.746 |
 
 固定混合明显差于学出来的 softmax —— **内容相关的深度选择是真的在干活**。Block 比 Full 差一点，仍明显好于 baseline。
 
