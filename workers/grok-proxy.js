@@ -69,7 +69,7 @@ export default {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "grok-4.5",
+        model: "grok-4.6",
         stream: true,
         reasoning_effort: "low",
         messages
