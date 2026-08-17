@@ -100,6 +100,7 @@ export const PAGES = [
   "/2020/07/27/CS224U/",
   "/2023/10/14/推荐系统总结/",
   "/2026/08/09/kimi-k3-attention-residuals/",
+  "/2026/08/16/pre-norm-vs-post-norm/",
 ];
 
 export const POSTS = PAGES.filter((p) => /^\/\d{4}\//.test(p));
