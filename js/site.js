@@ -21,7 +21,7 @@
   function apply(theme, persist) {
     root.setAttribute("data-theme", theme);
     root.style.colorScheme = theme;
-    if (meta) meta.setAttribute("content", theme === "dark" ? "#0e0e10" : "#f7f5f0");
+    if (meta) meta.setAttribute("content", theme === "dark" ? "#282c34" : "#f7f5f0");
     if (btn) {
       var dark = theme === "dark";
       btn.setAttribute("aria-checked", dark ? "true" : "false");
