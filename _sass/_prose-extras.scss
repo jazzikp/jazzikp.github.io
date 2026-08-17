@@ -10,6 +10,14 @@
   text-align: left;
 }
 .prose th { font-family: var(--font-sans); font-size: 12px; color: var(--muted); }
+
+// MathJax lays a display equation out at its natural width, which on a phone
+// is often wider than the column and drags the whole page sideways. Scroll it
+// inside the column instead.
+.prose .MJXc-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
 .timeline { list-style: none; padding: 0; margin: 24px 0; }
 .timeline li {
   display: grid;
