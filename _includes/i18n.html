@@ -1,0 +1,9 @@
+{%- comment -%}
+  Emits the attribute pair js/site.js swaps between. Pass a `_data/i18n.yml`
+  entry: {% include i18n.html s=site.data.i18n.nav.home %}
+
+  The Chinese attribute is omitted when the string has not been translated yet,
+  and the toggle leaves an element alone when it has no Chinese to swap in — so an
+  untranslated key degrades to English instead of blanking out.
+{%- endcomment -%}
+data-i18n-en="{{ include.s.en | escape }}"{% if include.s.zh != "" %} data-i18n-zh="{{ include.s.zh | escape }}"{% endif %}

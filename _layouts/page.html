@@ -3,9 +3,10 @@ layout: default
 ---
 <header class="page-hero">
     <div class="wrap">
-        <p class="eyebrow">{% if page.eyebrow %}{{ page.eyebrow }}{% else %}{{ site.author }}{% endif %}</p>
-        <h1>{{ page.title }}</h1>
-        {% if page.description %}<p>{{ page.description }}</p>{% endif %}
+        {%- assign eyebrow = page.eyebrow | default: site.author -%}
+        <p class="eyebrow" data-i18n-en="{{ eyebrow | escape }}" {% if page.eyebrow_zh %}data-i18n-zh="{{ page.eyebrow_zh | escape }}"{% endif %}>{{ eyebrow }}</p>
+        <h1 data-i18n-en="{{ page.title | escape }}" {% if page.title_zh %}data-i18n-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}</h1>
+        {% if page.description %}<p data-i18n-en="{{ page.description | escape }}" {% if page.description_zh %}data-i18n-zh="{{ page.description_zh | escape }}"{% endif %}>{{ page.description }}</p>{% endif %}
     </div>
 </header>
 <div class="wrap">
