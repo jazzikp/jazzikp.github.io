@@ -382,7 +382,7 @@ $$
 1. **衰减变成缩放。** query 乘 $$\gamma^{i}$$、key 除 $$\gamma^{j}$$，$$\mathbf{A}$$ 的每个元素就正好带上两个位置之间的衰减 $$\gamma^{j+1 \to i}$$ —— 整个 chunk 的带门控交互变成一次带 mask 的矩阵乘。
 2. **delta 修正可以提出来。** chunk 内那一串 rank-1 擦除算子，被 *UT transform* 折叠成 $$\widetilde{\mathbf{V}}_{[t]} = \mathbf{U}_{[t]} - \mathbf{W}_{[t]}\mathbf{S}_{[t]}$$，一个已经把「chunk 内更早的 token 覆盖了什么」算进去的伪 value。
 
-我用 NumPy 把 chunkwise 形式写出来对齐逐 token 循环，误差在 $$10^{-16}$$ 量级 —— 它是精确改写，不是近似，这也正是 KDA 能大规模训练的原因。
+把 chunkwise 形式写成 NumPy 去对齐逐 token 循环，误差在 $$10^{-16}$$ 量级 —— 它是精确改写，不是近似，这也正是 KDA 能大规模训练的原因。
 
 ### 相对 Kimi Linear，K3 改了什么
 
