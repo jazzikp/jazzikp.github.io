@@ -81,7 +81,7 @@ describe("browser", () => {
 
     await page.click(".theme-toggle");
     assert.equal(await page.getAttribute("html", "data-theme"), "dark");
-    assert.equal(await page.getAttribute('meta[name="theme-color"]', "content"), "#0e0e10");
+    assert.equal(await page.getAttribute('meta[name="theme-color"]', "content"), "#282c34");
     assert.equal(await page.getAttribute(".theme-toggle", "aria-checked"), "true");
 
     // Survives navigation.
@@ -94,7 +94,7 @@ describe("browser", () => {
     // If the inline bootstrap ran late the page would flash white.
     const { context, page } = await open("/", { theme: "dark" });
     const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-    assert.equal(bg, "rgb(14, 14, 16)");
+    assert.equal(bg, "rgb(40, 44, 52)");
     await context.close();
   });
 
