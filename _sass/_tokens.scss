@@ -25,23 +25,24 @@
 }
 
 html[data-theme="dark"] {
-  --bg: #0e0e10;
-  --bg-2: #161618;
-  --bg-3: #1c1c1f;
-  --surface: #161618;
-  --ink: #ececec;
-  --muted: #9a9a9e;
-  --line: rgba(255, 255, 255, 0.10);
-  --accent: #d6d2cb;
-  --accent-2: #bbb6ae;
-  --accent-ink: #111113;
-  --danger: #e07a6a;
-  --nav-bg: rgba(14, 14, 16, 0.82);
-  --code-bg: #121214;
-  --user-bubble: rgba(255, 255, 255, 0.08);
-  --shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
-  --faint: #6f6f74;
-  --glow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+  // Binaryify/OneDark-Pro UI palette: editor, sidebar and widget surfaces.
+  --bg: #282c34;
+  --bg-2: #21252b;
+  --bg-3: #2c313a;
+  --surface: #21252b;
+  --ink: #abb2bf;
+  --muted: #8b929e;
+  --line: #3e4452;
+  --accent: #61afef;
+  --accent-2: #56b6c2;
+  --accent-ink: #21252b;
+  --danger: #e06c75;
+  --nav-bg: rgba(33, 37, 43, 0.92);
+  --code-bg: #21252b;
+  --user-bubble: #2c313a;
+  --shadow: 0 16px 40px rgba(20, 22, 26, 0.38);
+  --faint: #7f848e;
+  --glow: 0 0 0 1px rgba(97, 175, 239, 0.12);
   color-scheme: dark;
 }
 
