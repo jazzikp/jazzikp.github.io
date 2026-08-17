@@ -23,14 +23,18 @@
             </button>
         </div>
         <ul class="nav-links">
-            <li><a href="{{ site.baseurl }}/" {% if page.url == "/" %}class="is-active"{% endif %}>Home</a></li>
-            <li><a href="{{ site.baseurl }}/blogs/" {% if page.url == "/blogs/" %}class="is-active"{% endif %}>Blogs</a></li>
-            <li><a href="{{ site.baseurl }}/projects/" {% if page.url == "/projects/" %}class="is-active"{% endif %}>Projects</a></li>
-            <li><a href="{{ site.baseurl }}/about/" {% if page.url == "/about/" %}class="is-active"{% endif %}>About</a></li>
-            <li><a href="{{ site.baseurl }}/contact/" {% if page.url == "/contact/" %}class="is-active"{% endif %}>Contact</a></li>
+            <li><a href="{{ site.baseurl }}/" {% if page.url == "/" %}class="is-active"{% endif %} {% include i18n.html s=site.data.i18n.nav.home %}>{{ site.data.i18n.nav.home.en }}</a></li>
+            <li><a href="{{ site.baseurl }}/blogs/" {% if page.url == "/blogs/" %}class="is-active"{% endif %} {% include i18n.html s=site.data.i18n.nav.blogs %}>{{ site.data.i18n.nav.blogs.en }}</a></li>
+            <li><a href="{{ site.baseurl }}/projects/" {% if page.url == "/projects/" %}class="is-active"{% endif %} {% include i18n.html s=site.data.i18n.nav.projects %}>{{ site.data.i18n.nav.projects.en }}</a></li>
+            <li><a href="{{ site.baseurl }}/about/" {% if page.url == "/about/" %}class="is-active"{% endif %} {% include i18n.html s=site.data.i18n.nav.about %}>{{ site.data.i18n.nav.about.en }}</a></li>
+            <li><a href="{{ site.baseurl }}/contact/" {% if page.url == "/contact/" %}class="is-active"{% endif %} {% include i18n.html s=site.data.i18n.nav.contact %}>{{ site.data.i18n.nav.contact.en }}</a></li>
         </ul>
         <div class="nav-tools">
-            <button class="nav-toggle" type="button" aria-label="Menu">Menu</button>
+            <div class="lang-tabs" role="tablist" aria-label="{{ site.data.i18n.nav.language.en }}">
+                <button type="button" class="on" role="tab" aria-selected="true" data-lang="en">EN</button>
+                <button type="button" role="tab" aria-selected="false" data-lang="zh">中</button>
+            </div>
+            <button class="nav-toggle" type="button" aria-label="{{ site.data.i18n.nav.menu.en }}" {% include i18n.html s=site.data.i18n.nav.menu %}>{{ site.data.i18n.nav.menu.en }}</button>
         </div>
     </div>
 </nav>

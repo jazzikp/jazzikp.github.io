@@ -19,20 +19,18 @@ layout: default
                 {% endfor %}
             </div>
             {% endif %}
-            <h1 class="post-title" data-title-en="{{ page.title | escape }}" {% if page.title_zh %}data-title-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}{% if page.wip %} <span class="wip-badge">WIP</span>{% endif %}</h1>
-            {% if page.subtitle %}<p class="sub post-sub" data-sub-en="{{ page.subtitle | escape }}" {% if page.subtitle_zh %}data-sub-zh="{{ page.subtitle_zh | escape }}"{% endif %}>{{ page.subtitle }}</p>{% endif %}
+            <h1 class="post-title" {% if page.title_zh %}data-i18n-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}{% if page.wip %} <span class="wip-badge">WIP</span>{% endif %}</h1>
+            {% if page.subtitle %}<p class="sub post-sub" {% if page.subtitle_zh %}data-i18n-zh="{{ page.subtitle_zh | escape }}"{% endif %}>{{ page.subtitle }}</p>{% endif %}
+            {%- comment -%}
+              The minute count is part of the swapped string, so the rendered text
+              stays the single phrase "8 min read" that the markup test looks for,
+              in either language.
+            {%- endcomment -%}
             <p class="meta">
                 <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
                 · {% if page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}
-                · {{ minutes }} min read
+                · <span {% if site.data.i18n.common.min_read.zh != "" %}data-i18n-zh="{{ minutes }} {{ site.data.i18n.common.min_read.zh }}"{% endif %}>{{ minutes }} {{ site.data.i18n.common.min_read.en }}</span>
             </p>
-
-            {% if page.bilingual %}
-            <div class="lang-tabs post-i18n" role="tablist" aria-label="Language">
-                <button type="button" class="on" role="tab" aria-selected="true" data-lang="en">EN</button>
-                <button type="button" role="tab" aria-selected="false" data-lang="zh">中</button>
-            </div>
-            {% endif %}
         </div>
     </header>
     <div class="wrap">
@@ -41,7 +39,7 @@ layout: default
         </div>
 
         {% if page.previous or page.next %}
-        <nav class="post-nav" aria-label="More posts">
+        <nav class="post-nav" aria-label="{{ site.data.i18n.post.more_posts.en }}">
             {% if page.previous %}
             <a class="prev" href="{{ page.previous.url | prepend: site.baseurl }}" rel="prev">
                 <span class="dir">«</span>
@@ -61,19 +59,19 @@ layout: default
 
         {% if site.comments.enable %}
         <section class="comments" id="comments" data-slug="{{ page.url }}">
-            <h2>Comments</h2>
-            <div class="comment-list" id="comment-list">Loading…</div>
+            <h2 {% include i18n.html s=site.data.i18n.post.comments %}>{{ site.data.i18n.post.comments.en }}</h2>
+            <div class="comment-list" id="comment-list" {% include i18n.html s=site.data.i18n.common.loading %}>{{ site.data.i18n.common.loading.en }}</div>
             <form class="comment-form" id="comment-form">
-                <label>Name
+                <label><span {% include i18n.html s=site.data.i18n.post.name %}>{{ site.data.i18n.post.name.en }}</span>
                     <input name="name" type="text" maxlength="40" required autocomplete="name">
                 </label>
                 <label class="hp" aria-hidden="true">Website
                     <input name="website" type="text" tabindex="-1" autocomplete="off">
                 </label>
-                <label>Comment
+                <label><span {% include i18n.html s=site.data.i18n.post.comment %}>{{ site.data.i18n.post.comment.en }}</span>
                     <textarea name="body" rows="4" maxlength="2000" required></textarea>
                 </label>
-                <button class="btn primary" type="submit">Post comment</button>
+                <button class="btn primary" type="submit" {% include i18n.html s=site.data.i18n.post.post_comment %}>{{ site.data.i18n.post.post_comment.en }}</button>
                 <p class="comment-status" id="comment-status" hidden></p>
             </form>
         </section>
@@ -83,9 +81,6 @@ layout: default
 
 {% if page.math %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
-{% endif %}
-{% if page.bilingual %}
-<script defer src="{{ site.baseurl }}/js/lang.js?v={{ site.asset_version }}"></script>
 {% endif %}
 <script defer src="{{ site.baseurl }}/js/post.js?v={{ site.asset_version }}"></script>
 

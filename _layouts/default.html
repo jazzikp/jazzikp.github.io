@@ -2,7 +2,7 @@
 <html lang="{{ page.lang | default: site.lang | default: 'en' }}">
 {% include head.html %}
 <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main" {% include i18n.html s=site.data.i18n.common.skip_to_content %}>{{ site.data.i18n.common.skip_to_content.en }}</a>
     {% include nav.html %}
     <main id="main">
         {{ content }}

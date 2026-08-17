@@ -1,0 +1,12 @@
+{%- comment -%}
+  Emits the Chinese attribute the toggle in js/site.js swaps in. Pass a
+  `_data/i18n.yml` entry: {% include i18n.html s=site.data.i18n.nav.home %}
+
+  Only the Chinese is emitted. The English is already the element's text, so
+  shipping it a second time in a `data-i18n-en` attribute would add bytes to
+  every page for nothing — the script reads it out of the DOM instead.
+
+  An untranslated key gets no attribute at all, so the toggle skips the
+  element and it stays English rather than blanking out.
+{%- endcomment -%}
+{% if include.s.zh != "" %}data-i18n-zh="{{ include.s.zh | escape }}"{% endif %}

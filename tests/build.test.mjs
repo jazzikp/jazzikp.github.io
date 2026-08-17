@@ -30,7 +30,6 @@ describe("build output", () => {
       "js/chat.js",
       "js/comments.js",
       "js/post.js",
-      "js/lang.js",
       "js/blogs.js",
       "sw.js",
       "feed.xml",
