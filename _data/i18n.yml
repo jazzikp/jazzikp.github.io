@@ -12,56 +12,56 @@
 nav:
   home:
     en: "Home"
-    zh: ""
+    zh: "首页"
   blogs:
     en: "Blogs"
-    zh: ""
+    zh: "博客"
   projects:
     en: "Projects"
-    zh: ""
+    zh: "项目"
   about:
     en: "About"
-    zh: ""
+    zh: "关于"
   contact:
     en: "Contact"
-    zh: ""
+    zh: "联系"
   menu:
     en: "Menu"
-    zh: ""
+    zh: "菜单"
   language:
     en: "Language"
-    zh: ""
+    zh: "语言"
 
 common:
   skip_to_content:
     en: "Skip to content"
-    zh: ""
+    zh: "跳至内容"
   ask_jazzik:
     en: "Ask Jazzik"
-    zh: ""
+    zh: "问 Jazzik"
   made_by_grok:
     en: "Made by Grok"
-    zh: ""
+    zh: "Grok 制作"
   min_read:
     en: "min read"
-    zh: ""
+    zh: "分钟阅读"
   loading:
     en: "Loading…"
-    zh: ""
+    zh: "加载中…"
 
 post:
   comments:
     en: "Comments"
-    zh: ""
+    zh: "评论"
   name:
     en: "Name"
-    zh: ""
+    zh: "姓名"
   comment:
     en: "Comment"
-    zh: ""
+    zh: "评论"
   post_comment:
     en: "Post comment"
-    zh: ""
+    zh: "发表评论"
   more_posts:
     en: "More posts"
-    zh: ""
+    zh: "更多文章"

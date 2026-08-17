@@ -37,7 +37,16 @@ const uiFile = join(root, "_data", "i18n.yml");
 const API = "https://api.x.ai/v1/chat/completions";
 const MODEL = "grok-4.6";
 
-const PROSE_SYSTEM = `You translate English technical writing into Simplified Chinese for a machine-learning blog.
+/**
+ * Not every post starts in English. The CS224U write-up is in Chinese with
+ * English technical terms, so translating it "into Chinese" would produce an
+ * English panel that is still Chinese. The direction is chosen per post from
+ * what the body actually contains.
+ */
+function proseSystem(target) {
+  const [from, to] =
+    target === "zh" ? ["English", "Simplified Chinese"] : ["Simplified Chinese", "English"];
+  return `You translate ${from} technical writing into ${to} for a machine-learning blog.
 
 Rules, in order of importance:
 
@@ -46,8 +55,9 @@ Rules, in order of importance:
 3. Keep every maths expression byte-for-byte identical. Anything between $$ and $$ is maths. Do not translate it, do not reformat it, and never remove a backslash.
 4. Keep the Markdown structure identical: the same headings at the same levels, the same list shapes, the same block quotes, the same tables, the same kramdown attribute lists such as {: loading="lazy"}.
 5. Keep every link and image target identical. Translate link text, never the URL.
-6. Leave established technical terms in English where a Chinese reader in this field would expect them: Transformer, Pre-Norm, Post-Norm, LayerNorm, RMSNorm, attention, residual, embedding, logits, softmax, tokenizer, JAX, GPU, and the names of papers, models and libraries.
-7. Write the way a working Chinese ML engineer writes: direct, unpadded, no marketing register.`;
+6. Leave established technical terms in English: Transformer, Pre-Norm, Post-Norm, LayerNorm, RMSNorm, attention, residual, embedding, logits, softmax, tokenizer, JAX, GPU, and the names of papers, models, courses and libraries.
+7. Write the way a working ML engineer writes: direct, unpadded, no marketing register.`;
+}
 
 const UI_SYSTEM = `You translate short user-interface strings for a machine-learning blog into Simplified Chinese.
 
@@ -124,7 +134,26 @@ function shape(text) {
   };
 }
 
-function compareShape(english, chinese) {
+const HAN = /[\u4e00-\u9fff]/g;
+
+/** Prose only — code and maths are full of Latin letters either way. */
+function prose(text) {
+  return text.replace(/```[\s\S]*?```/g, " ").replace(/\$\$[\s\S]*?\$\$/g, " ");
+}
+
+/** Which language a body is written in, from what it actually contains. */
+function detectLanguage(body) {
+  const text = prose(body);
+  const han = (text.match(HAN) || []).length;
+  const latin = (text.match(/[A-Za-z]/g) || []).length;
+  if (!han) return "en";
+  // Chinese is far denser per character than Latin script, so a genuinely
+  // Chinese post still shows a minority Han count once English technical
+  // terms are counted letter by letter.
+  return han / (han + latin) > 0.15 ? "zh" : "en";
+}
+
+function compareShape(english, chinese, target = "zh") {
   const a = shape(english);
   const b = shape(chinese);
   const problems = [];
@@ -140,9 +169,14 @@ function compareShape(english, chinese) {
   }
   if (String(a.images) !== String(b.images)) problems.push("image sources changed");
 
-  // A translation that is still English has not failed any structural check.
-  const han = (chinese.match(/[\u4e00-\u9fff]/g) || []).length;
-  if (han < 50) problems.push(`only ${han} Chinese characters — looks untranslated`);
+  // A model that echoes the input passes every structural check above, so the
+  // output has to be shown to be in the language that was asked for.
+  const before = detectLanguage(english);
+  const after = detectLanguage(chinese);
+  if (after !== target) {
+    problems.push(`output reads as ${after}, expected ${target} — looks untranslated`);
+  }
+  if (before === after) problems.push(`input and output are both ${after}`);
 
   return problems;
 }
@@ -222,13 +256,18 @@ async function translatePost(file, args) {
   const title = frontMatterValue(frontMatter, "title");
   const subtitle = frontMatterValue(frontMatter, "subtitle");
 
-  const english = body.replace(KRAMDOWN_OPTIONS, "").trim();
-  const chinese = await grok(PROSE_SYSTEM, english);
+  const source = body.replace(KRAMDOWN_OPTIONS, "").trim();
+  const from = detectLanguage(source);
+  const target = from === "zh" ? "en" : "zh";
+  const translated = await grok(proseSystem(target), source);
 
-  const problems = compareShape(english, chinese);
+  const problems = compareShape(source, translated, target);
   if (problems.length) {
     return { rel, status: "REJECTED", problems };
   }
+
+  const english = target === "zh" ? source : translated;
+  const chinese = target === "zh" ? translated : source;
 
   const strings = await grok(
     UI_SYSTEM,
@@ -241,15 +280,20 @@ async function translatePost(file, args) {
     return { rel, status: "REJECTED", problems: ["title translation was not JSON"] };
   }
 
+  // A `_zh` value identical to the English is not a translation — the model
+  // decided the string is a proper name. Writing it would add a key that
+  // swaps nothing, so the key is left out and the template falls back.
   let fm = frontMatter;
-  if (parsed.title) fm = insertAfter(fm, "title", `title_zh: ${yamlQuote(parsed.title)}`);
-  if (subtitle && parsed.subtitle) {
+  if (parsed.title && parsed.title !== title) {
+    fm = insertAfter(fm, "title", `title_zh: ${yamlQuote(parsed.title)}`);
+  }
+  if (subtitle && parsed.subtitle && parsed.subtitle !== subtitle) {
     fm = insertAfter(fm, "subtitle", `subtitle_zh: ${yamlQuote(parsed.subtitle)}`);
   }
   if (!isBilingual(fm)) fm = insertAfter(fm, "date", "bilingual: true");
 
   await writeFile(file, `---\n${fm}\n---\n${buildBilingualBody(english, chinese)}`, "utf8");
-  return { rel, status: "translated" };
+  return { rel, status: `translated ${from}→${target}` };
 }
 
 // ---------------------------------------------------------------------------
