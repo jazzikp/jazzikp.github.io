@@ -19,8 +19,8 @@ layout: default
                 {% endfor %}
             </div>
             {% endif %}
-            <h1 class="post-title" data-i18n-en="{{ page.title | escape }}" {% if page.title_zh %}data-i18n-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}{% if page.wip %} <span class="wip-badge">WIP</span>{% endif %}</h1>
-            {% if page.subtitle %}<p class="sub post-sub" data-i18n-en="{{ page.subtitle | escape }}" {% if page.subtitle_zh %}data-i18n-zh="{{ page.subtitle_zh | escape }}"{% endif %}>{{ page.subtitle }}</p>{% endif %}
+            <h1 class="post-title" {% if page.title_zh %}data-i18n-zh="{{ page.title_zh | escape }}"{% endif %}>{{ page.title }}{% if page.wip %} <span class="wip-badge">WIP</span>{% endif %}</h1>
+            {% if page.subtitle %}<p class="sub post-sub" {% if page.subtitle_zh %}data-i18n-zh="{{ page.subtitle_zh | escape }}"{% endif %}>{{ page.subtitle }}</p>{% endif %}
             {%- comment -%}
               The minute count is part of the swapped string, so the rendered text
               stays the single phrase "8 min read" that the markup test looks for,
@@ -29,7 +29,7 @@ layout: default
             <p class="meta">
                 <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
                 · {% if page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}
-                · <span data-i18n-en="{{ minutes }} {{ site.data.i18n.common.min_read.en }}" {% if site.data.i18n.common.min_read.zh != "" %}data-i18n-zh="{{ minutes }} {{ site.data.i18n.common.min_read.zh }}"{% endif %}>{{ minutes }} {{ site.data.i18n.common.min_read.en }}</span>
+                · <span {% if site.data.i18n.common.min_read.zh != "" %}data-i18n-zh="{{ minutes }} {{ site.data.i18n.common.min_read.zh }}"{% endif %}>{{ minutes }} {{ site.data.i18n.common.min_read.en }}</span>
             </p>
         </div>
     </header>

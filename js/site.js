@@ -68,11 +68,18 @@
   if (!tabs.length) return;
 
   var panels = document.querySelectorAll("[data-lang-panel]");
-  var swappable = document.querySelectorAll("[data-i18n-en]");
+  var swappable = document.querySelectorAll("[data-i18n-zh]");
   var LANG_KEY = "post-lang";
 
+  // The English is already the element's text, so it is read out of the DOM
+  // rather than shipped again in an attribute. Captured before any swap runs.
+  swappable.forEach(function (el) {
+    var first = el.childNodes[0];
+    el.__en = (first && first.nodeType === 3 ? first.textContent : el.textContent).trim();
+  });
+
   function swapText(el, lang) {
-    var next = el.getAttribute(lang === "zh" ? "data-i18n-zh" : "data-i18n-en");
+    var next = lang === "zh" ? el.getAttribute("data-i18n-zh") : el.__en;
     if (!next) return;
     // Only the leading text node is replaced, so a trailing badge or icon —
     // the WIP marker on a post title, the mark in the footer — survives.
