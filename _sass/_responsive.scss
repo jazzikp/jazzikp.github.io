@@ -8,7 +8,7 @@
   .career::before { left: 4px; }
   .career-item { gap: 8px; padding-left: 24px; }
   .career-item::before { left: 0; }
-  .nav-toggle { display: block; }
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; }
   .nav-links {
     display: none;
     position: absolute;
