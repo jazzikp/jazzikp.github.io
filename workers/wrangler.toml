@@ -6,6 +6,7 @@ workers_dev = true
 [vars]
 # Set the secret separately:
 #   npx wrangler secret put XAI_API_KEY
+CORPUS_URL = "https://jazzikp.github.io/corpus.json"
 
 [[d1_databases]]
 binding = "DB"

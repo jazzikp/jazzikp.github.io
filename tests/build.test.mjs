@@ -39,6 +39,7 @@ describe("build output", () => {
       "img/social-card.jpg",
       "img/favicon-32.png",
       "img/apple-touch-icon.png",
+      "corpus.json",
     ];
     for (const file of required) {
       const res = await fetch(site.origin + "/" + file);
@@ -126,7 +127,7 @@ describe("build output", () => {
     const xml = await readFile(join(SITE, "sitemap.xml"), "utf8");
     assert.ok(xml.includes("https://jazzikp.github.io/about/"), "about page missing from sitemap");
     assert.ok(xml.includes("/2026/08/09/kimi-k3-attention-residuals/"), "posts missing from sitemap");
-    for (const excluded of ["/write/", "/404", "/offline", "/tags/"]) {
+    for (const excluded of ["/write/", "/404", "/offline", "/tags/", "/corpus.json"]) {
       assert.ok(!xml.includes(excluded), `${excluded} should not be in the sitemap`);
     }
   });
@@ -134,6 +135,26 @@ describe("build output", () => {
   test("robots.txt points at the sitemap", async () => {
     const txt = await readFile(join(SITE, "robots.txt"), "utf8");
     assert.match(txt, /Sitemap: https:\/\/jazzikp\.github\.io\/sitemap\.xml/);
+    assert.match(txt, /Disallow: \/corpus\.json/, "corpus.json should stay out of search indexes");
+  });
+
+  test("the chat corpus is valid JSON covering posts and bio pages", async () => {
+    const corpus = JSON.parse(await readFile(join(SITE, "corpus.json"), "utf8"));
+    const pageUrls = new Set((corpus.pages || []).map((p) => p.url));
+    for (const need of ["/", "/about/", "/contact/", "/projects/", "/blogs/", "/reports/"]) {
+      assert.ok(pageUrls.has(need), `corpus pages missing ${need}`);
+    }
+    assert.ok(!pageUrls.has("/write/"), "the write tool should not be in the corpus");
+    const posts = corpus.posts || [];
+    assert.ok(posts.length >= 5, `corpus has ${posts.length} posts`);
+    assert.ok(posts.some((p) => (p.url || "").includes("kimi-k3")));
+    assert.ok(posts.some((p) => (p.title || "").includes("Kimi") || (p.text || "").includes("KDA")));
+    for (const post of posts) {
+      assert.ok(post.title && post.url && post.text, `post is missing fields: ${JSON.stringify(post).slice(0, 120)}`);
+    }
+    assert.ok((corpus.projects || []).length >= 1, "corpus has no projects");
+    const about = (corpus.pages || []).find((p) => p.kind === "about" || p.url === "/about/");
+    assert.ok(about && /Phoenix|Grok/.test(about.text), "about page text is missing from the corpus");
   });
 
   test("the RSS feed is valid XML with items", async () => {

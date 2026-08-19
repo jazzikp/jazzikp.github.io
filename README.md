@@ -110,6 +110,8 @@ deploy once; it will then unregister itself and drop its caches.
 
 The browser never talks to xAI with a raw key. Deploy the Cloudflare worker, then put its URL in `_config.yml` as `grok.proxy_url`.
 
+Jekyll emits `/corpus.json` at build time — every post, the homepage bio/timeline, About, projects, reports, and contact. The worker fetches that file and retrieves the relevant excerpts into the system prompt, so a new post is available after the next GitHub Pages build with no prompt rewrite. Redeploy the worker when `workers/grok-proxy.js` (or `workers/corpus.js`) changes:
+
 ```bash
 cd workers
 npx wrangler secret put XAI_API_KEY
