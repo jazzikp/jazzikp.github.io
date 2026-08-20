@@ -168,17 +168,19 @@ describe("browser", () => {
     const { context, page } = await open("/about/");
     assert.ok(await page.locator('[data-lang-panel="en"]').first().isVisible());
 
-    await page.click('.lang-tabs [data-lang="zh"]');
+    assert.equal((await page.locator(".lang-toggle").innerText()).trim(), "中");
+    await page.click(".lang-toggle");
     await page.waitForTimeout(100);
     assert.ok(await page.locator('[data-lang-panel="zh"]').first().isVisible());
     assert.ok(!(await page.locator('[data-lang-panel="en"]').first().isVisible()));
     assert.equal(await page.getAttribute("html", "lang"), "zh");
+    assert.equal((await page.locator(".lang-toggle").innerText()).trim(), "EN");
 
     await page.goto(site.origin + "/2026/08/09/kimi-k3-attention-residuals/");
     await page.waitForTimeout(300);
     assert.match(await page.locator(".post-title").innerText(), /KDA 技术路线深读/);
 
-    await page.click('.lang-tabs [data-lang="en"]');
+    await page.click(".lang-toggle");
     await page.waitForTimeout(100);
     assert.match(await page.locator(".post-title").innerText(), /An In-Depth Look at KDA/);
     await context.close();
