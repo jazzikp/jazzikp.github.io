@@ -1,0 +1,78 @@
+---
+layout: null
+permalink: /corpus.json
+sitemap: false
+---
+{
+  "generated_at": {{ site.time | date_to_xmlschema | jsonify }},
+  "author": {{ site.author | jsonify }},
+  "title": {{ site.title | jsonify }},
+  "description": {{ site.description | jsonify }},
+  "url": {{ site.url | jsonify }},
+  "pages": [
+    {%- assign keep = "|/|/about/|/contact/|/projects/|/blogs/|/reports/|" -%}
+    {%- assign sep = false -%}
+    {%- for p in site.html_pages -%}
+      {%- assign needle = "|" | append: p.url | append: "|" -%}
+      {%- if keep contains needle -%}
+      {%- if sep -%},{%- endif -%}
+      {%- assign sep = true %}
+    {
+      "url": {{ p.url | jsonify }},
+      "title": {{ p.title | default: site.title | jsonify }},
+      "kind": {{ p.url | replace: "/", "" | default: "home" | jsonify }},
+      "description": {{ p.description | jsonify }},
+      "text": {{ p.content | strip_html | normalize_whitespace | truncate: 4000 | jsonify }}
+    }
+      {%- endif -%}
+    {%- endfor %}
+  ],
+  "posts": [
+    {%- for post in site.posts %}
+    {
+      "url": {{ post.url | jsonify }},
+      "title": {{ post.title | jsonify }},
+      "title_zh": {{ post.title_zh | jsonify }},
+      "subtitle": {{ post.subtitle | jsonify }},
+      "subtitle_zh": {{ post.subtitle_zh | jsonify }},
+      "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
+      "tags": {{ post.tags | jsonify }},
+      "kind": "post",
+      "text": {{ post.content | strip_html | normalize_whitespace | truncate: 6000 | jsonify }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor %}
+  ],
+  "projects": [
+    {%- for p in site.data.projects %}
+    {
+      "title": {{ p.title | jsonify }},
+      "year": {{ p.year | jsonify }},
+      "kind": "project",
+      "url": {{ p.url | jsonify }},
+      "text": {{ p.summary | jsonify }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor %}
+  ],
+  "reports": [
+    {%- for r in site.reports %}
+    {
+      "url": {{ r.url | jsonify }},
+      "title": {{ r.title | jsonify }},
+      "date": {{ r.date | date: "%Y-%m-%d" | jsonify }},
+      "kind": "report",
+      "text": {{ r.content | strip_html | normalize_whitespace | truncate: 6000 | jsonify }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor %}
+  ],
+  "upcoming_reports": [
+    {%- for item in site.data.upcoming_reports %}
+    {
+      "title": {{ item.title | jsonify }},
+      "subtitle": {{ item.subtitle | jsonify }},
+      "eta": {{ item.eta | jsonify }},
+      "kind": "upcoming_report",
+      "text": {{ item.subtitle | jsonify }}
+    }{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor %}
+  ]
+}

@@ -8,4 +8,7 @@ Allow: /
 # The draft editor is a local authoring tool, not content.
 Disallow: /write/
 
+# Machine-readable chat grounding file, not a page.
+Disallow: /corpus.json
+
 Sitemap: {{ site.url }}{{ site.baseurl }}/sitemap.xml
