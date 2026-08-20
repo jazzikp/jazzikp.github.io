@@ -19,6 +19,27 @@
   align-items: center;
   gap: 8px;
 }
+/* Same row as Menu on mobile: no extra margin, shared line-height, flex
+   centering. The old two-tab .lang-tabs wrapper had a 14px bottom margin
+   that shifted the control up relative to Menu. */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  border-radius: 3px;
+  padding: 4px 10px;
+  margin: 0;
+  line-height: 1.2;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+.nav-tools .nav-toggle {
+  margin: 0;
+  line-height: 1.2;
+}
 .brand-row {
   display: flex;
   align-items: center;

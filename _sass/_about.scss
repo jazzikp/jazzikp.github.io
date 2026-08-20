@@ -88,18 +88,6 @@
   font-size: 13px;
   color: var(--muted);
 }
-.lang-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-.lang-tabs button {
-  background: none;
-  border: 1px solid var(--line);
-  color: var(--muted);
-  border-radius: 3px;
-  padding: 4px 10px;
-  cursor: pointer;
-  font-family: var(--font-sans);
-}
-.lang-tabs button.on { color: var(--ink); border-color: var(--ink); }
-.post-hero .lang-tabs { margin: 16px 0 0; }
 .wip-badge {
   display: inline-block;
   margin-left: 6px;

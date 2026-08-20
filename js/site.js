@@ -64,12 +64,13 @@
    * <h1> per page and one link per destination, which is what the markup and
    * SEO tests require.
    */
-  var tabs = document.querySelectorAll(".lang-tabs [data-lang]");
-  if (!tabs.length) return;
+  var langBtn = document.querySelector(".lang-toggle");
+  if (!langBtn) return;
 
   var panels = document.querySelectorAll("[data-lang-panel]");
   var swappable = document.querySelectorAll("[data-i18n-zh]");
   var LANG_KEY = "post-lang";
+  var currentLang = "en";
 
   // The English is already the element's text, so it is read out of the DOM
   // rather than shipped again in an attribute. Captured before any swap runs.
@@ -92,11 +93,12 @@
   }
 
   function setLang(lang, persist) {
-    tabs.forEach(function (t) {
-      var on = t.getAttribute("data-lang") === lang;
-      t.classList.toggle("on", on);
-      t.setAttribute("aria-selected", on ? "true" : "false");
-    });
+    currentLang = lang === "zh" ? "zh" : "en";
+    // Label is the language you will switch TO, not the current one.
+    langBtn.textContent = currentLang === "zh" ? "EN" : "中";
+    langBtn.setAttribute("aria-label", currentLang === "zh" ? "Switch to English" : "Switch to Chinese");
+    langBtn.setAttribute("aria-pressed", currentLang === "zh" ? "true" : "false");
+
     panels.forEach(function (p) {
       p.hidden = p.getAttribute("data-lang-panel") !== lang;
     });
@@ -105,18 +107,16 @@
     });
 
     // Screen readers and browser translation both key off this.
-    root.lang = lang === "zh" ? "zh" : "en";
+    root.lang = currentLang;
 
     if (persist) {
-      try { localStorage.setItem(LANG_KEY, lang); } catch (e) {}
+      try { localStorage.setItem(LANG_KEY, currentLang); } catch (e) {}
     }
     if (window.MathJax && MathJax.Hub) MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
   }
 
-  tabs.forEach(function (tab) {
-    tab.addEventListener("click", function () {
-      setLang(tab.getAttribute("data-lang"), true);
-    });
+  langBtn.addEventListener("click", function () {
+    setLang(currentLang === "zh" ? "en" : "zh", true);
   });
 
   var savedLang = null;
