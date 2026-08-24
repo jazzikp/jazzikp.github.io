@@ -18,6 +18,13 @@
   overflow-x: auto;
   overflow-y: hidden;
 }
+@media (max-width: 600px) {
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
 .timeline { list-style: none; padding: 0; margin: 24px 0; }
 .timeline li {
   display: grid;

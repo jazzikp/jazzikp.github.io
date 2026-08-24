@@ -15,7 +15,11 @@ let site, browser;
 
 before(async () => {
   site = await startSite();
-  browser = await chromium.launch();
+  browser = await chromium.launch(
+    process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE
+      ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE }
+      : {}
+  );
 });
 after(async () => {
   await browser?.close();
@@ -187,17 +191,22 @@ describe("browser", () => {
   });
 
   test("code blocks get a working copy button", async () => {
-    const { context, page } = await open("/2019/04/03/Python_For_Absolute_Newbies/");
-    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-    const buttons = await page.locator(".code-copy").count();
-    assert.ok(buttons > 0, "no copy buttons were added");
+    for (const path of [
+      "/2019/04/03/Python_For_Absolute_Newbies/",
+      "/2026/08/09/kimi-k3-attention-residuals/",
+    ]) {
+      const { context, page } = await open(path);
+      await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+      const buttons = await page.locator(".code-copy").count();
+      assert.ok(buttons > 0, `${path} has no copy buttons`);
 
-    await page.locator(".code-copy").first().click();
-    await page.waitForTimeout(200);
-    assert.match(await page.locator(".code-copy").first().innerText(), /Copied/);
-    const clipboard = await page.evaluate(() => navigator.clipboard.readText());
-    assert.ok(clipboard.length > 0, "clipboard is empty after clicking Copy");
-    await context.close();
+      await page.locator(".code-copy").first().click();
+      await page.waitForTimeout(200);
+      assert.match(await page.locator(".code-copy").first().innerText(), /Copied/);
+      const clipboard = await page.evaluate(() => navigator.clipboard.readText());
+      assert.ok(clipboard.length > 0, `${path} left the clipboard empty`);
+      await context.close();
+    }
   });
 
   test("headings get anchors that link to themselves", async () => {
@@ -265,7 +274,13 @@ describe("browser", () => {
   });
 
   test("mobile: the menu opens and nothing overflows sideways", async () => {
-    for (const path of ["/", "/blogs/", "/about/", "/2020/07/27/CS224U/"]) {
+    for (const path of [
+      "/",
+      "/blogs/",
+      "/about/",
+      "/2020/07/27/CS224U/",
+      "/2026/08/09/kimi-k3-attention-residuals/",
+    ]) {
       const { context, page } = await open(path, { viewport: { width: 390, height: 844 } });
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth

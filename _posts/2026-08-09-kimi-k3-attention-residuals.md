@@ -4,6 +4,7 @@ title: "Kimi K3: An In-Depth Look at KDA"
 title_zh: "Kimi K3：KDA 技术路线深读"
 subtitle: "Kimi Delta Attention across the sequence, Attention Residuals across depth"
 subtitle_zh: "序列方向的 Kimi Delta Attention，深度方向的 Attention Residuals"
+description: "A professor-style explanation of Kimi Delta Attention, its delta-rule memory, channel-wise decay, Big-O complexity, hybrid use with MLA, and a verified CPU-only Python tutorial."
 date: 2026-08-09
 author: Zhejian Peng
 bilingual: true
@@ -119,34 +120,243 @@ Decay first, then the correction. Everything on the right is produced from the t
 
 The ShortConv gives each token a short local window before it becomes a key or value; the L2Norm is what makes the erase step a clean projection rather than an arbitrary rescaling.
 
-The whole layer, in NumPy:
+The update is easiest to implement in its equivalent **decay → predict → correct → read** form:
 
 ```python
-S = np.zeros((dk, dv))
-for t in range(T):
-    S = (np.eye(dk) - beta[t] * np.outer(k[t], k[t])) @ (alpha[t][:, None] * S) \
-        + beta[t] * np.outer(k[t], v[t])
-    o[t] = S.T @ q[t]
+decayed_state = row_scale(alpha_t, state)
+prediction = transpose_matrix_vector(decayed_state, key_t)
+error = vector_sub(value_t, prediction)
+state = matrix_add(decayed_state, matrix_scale(beta_t, outer(key_t, error)))
+output = transpose_matrix_vector(state, query_t)
 ```
 
-### Making a serial recurrence run on tensor cores
+This version exposes the idea more clearly than constructing $$\mathbf I-\beta kk^\top$$: the layer forgets rows of its state, asks what value the decayed state predicts for the current key, and writes only the residual error.
 
-That loop is correct and hopeless on a GPU: one tiny rank-1 update per token, no parallelism. The fix is the **chunkwise form** — split the sequence into chunks of $$C$$ tokens, stay recurrent *across* chunks, go fully parallel *inside* one. Let $$\gamma^{r} = \prod_{i \le r} \alpha^i$$ be the cumulative decay inside the chunk. Then, given the incoming state $$\mathbf{S}_{[t]}$$,
+### Run the complete tutorial on a CPU
+
+The [complete dependency-free Python tutorial](/examples/kda_cpu_tutorial.py) uses only the standard library. It is not Kimi K3 and it is not a fast production kernel; it is a small numerical laboratory for the equations in this article. From the repository root:
+
+```bash
+python3 examples/kda_cpu_tutorial.py
+```
+
+It runs five experiments:
+
+1. writes an association, repeats it, and shows that the delta rule does not double-count it;
+2. overwrites the same key with a new value and demonstrates the effect of $$\beta$$;
+3. applies different retention factors to different state rows;
+4. verifies the UT chunk form against token-by-token KDA;
+5. verifies associative segment composition for KDA Context Parallelism and compares the old and new decay maps.
+
+I ran it on CPU. The two ways of evaluating a chunk agreed to floating-point precision:
+
+```text
+Maximum output difference:      8.882e-16
+Maximum final-state difference: 6.661e-16
+Maximum segment difference:     4.441e-16
+All numerical equivalence checks passed.
+```
+
+I also ran 100 random recurrence-versus-chunk tests and 100 random segment-composition tests; all passed. These checks validate the educational implementation's algebra, not the speed or low-precision numerical behavior of FlashKDA's CUDA kernel.
+
+### Big-O: what becomes linear, and what does not
+
+Let $$T$$ be sequence length, $$H$$ the number of heads, and $$d_k,d_v$$ the key and value dimensions per head. Ignoring the Q/K/V projections shared by both designs, causal softmax attention and recurrent KDA scale as follows:
+
+| mechanism | sequence work | decode cache | next token |
+|---|---:|---:|---:|
+| softmax | $$O(HT^2d_k)$$ | $$O(HT(d_k+d_v))$$ | $$O(HT(d_k+d_v))$$ |
+| KDA | $$O(HTd_kd_v)$$ | $$O(Hd_kd_v)$$ | $$O(Hd_kd_v)$$ |
+
+When $$H,d_k,d_v$$ are fixed architectural constants, KDA is $$O(T)$$ over a sequence and $$O(1)$$ in persistent cache with respect to context length. “Constant” does not mean free: every new token still reads and updates an entire $$d_k\times d_v$$ state per head.
+
+Kimi K3 uses $$H=96$$ and $$d_k=d_v=128$$, so one KDA layer carries
 
 $$
-\mathbf{A}_{[t]}=\operatorname{Tril}\left[(\mathbf{Q}_{[t]} \odot \mathbf{\Gamma}_{[t]})(\mathbf{K}_{[t]} / \mathbf{\Gamma}_{[t]})^{\top}\right]
+96\times128\times128=1{,}572{,}864
+$$
+
+state elements per sequence: about 3 MiB in BF16. Across 69 KDA layers that is about 207 MiB before tensor-parallel sharding, convolution histories, allocators, and saved prefix checkpoints. Its size does not grow when the context goes from 1K to 1M tokens.
+
+The production chunk kernel has the per-head attention cost reported in Kimi Linear:
+
+$$
+6Td_h^2+3TCd_h+TC^2,
+$$
+
+where $$C$$ is chunk size and $$d_h=d_k=d_v$$. This remains $$O(T)$$ for fixed $$C$$ and $$d_h$$. The tutorial's explicit Python loops are deliberately readable rather than optimized; timing them would measure Python overhead, not FlashKDA.
+
+The whole Kimi K3 model is also not constant-cache. Its 24 MLA layers still keep sequence-growing latent KV caches and perform global attention. The 69 KDA layers remove that growth from roughly three quarters of the attention stack.
+
+### Why use KDA?
+
+KDA is useful when generation is long enough that repeatedly reading a growing KV cache dominates cost:
+
+- **Fixed recurrent memory.** Most layers replace per-token KV entries with one state matrix.
+- **Corrective writes.** The delta rule overwrites an association instead of accumulating stale and duplicate values.
+- **Different memory timescales.** Channel-wise $$\alpha$$ lets one head maintain fast-forgetting and slow-retaining features simultaneously.
+- **Implicit order and recency.** The ordered, data-dependent transitions change when token order changes, so the model can use NoPE in its global layers.
+- **Exact GPU-friendly reformulation.** Training uses chunkwise matrix multiplication without changing the mathematical recurrence.
+
+The price is finite capacity. A fixed state can blur unrelated facts or lose exact token details, which is why Kimi K3 retains periodic global MLA rather than using KDA everywhere.
+
+### Chunkwise parallel form, step by step
+
+The recurrent loop is ideal for decoding one token at a time, but poor for training: token $$r$$ needs the state produced by token $$r-1$$, so a literal implementation launches one small matrix update after another. Chunkwise KDA does **not** remove the recurrence. It packages most of the work inside a fixed-size chunk into dense matrix multiplications, while passing one state sequentially between chunks.
+
+#### 1. Lay out one chunk
+
+For a chunk of $$C$$ tokens, stack rows as
+
+$$
+\mathbf Q,\mathbf K\in\mathbb R^{C\times d_k},\qquad
+\mathbf V,\mathbf O\in\mathbb R^{C\times d_v},\qquad
+\mathbf S_{\mathrm{in}}\in\mathbb R^{d_k\times d_v}.
+$$
+
+For positions $$1\le i\le j\le C$$, define the channel-wise cumulative retention
+
+$$
+\gamma^{i\to j}=\prod_{r=i}^{j}\alpha^r,
+\qquad
+\gamma^j=\gamma^{1\to j}.
+$$
+
+Every product is elementwise over the $$d_k$$ key channels. Let $$\mathbf\Gamma\in\mathbb R^{C\times d_k}$$ stack $$\gamma^1,\ldots,\gamma^C$$ row by row.
+
+#### 2. See what the recurrence is hiding
+
+Write one token transition as
+
+$$
+\mathbf T_r=(\mathbf I-\beta_r k_rk_r^\top)\operatorname{Diag}(\alpha_r),
+\qquad
+\mathbf B_r=\beta_rk_rv_r^\top.
+$$
+
+After the first $$r$$ tokens of the chunk,
+
+$$
+\mathbf S^r=
+\underbrace{\mathbf T_r\mathbf T_{r-1}\cdots\mathbf T_1}_{\mathbf P^r}
+\mathbf S_{\mathrm{in}}
++
+\sum_{i=1}^{r}
+\mathbf T_r\cdots\mathbf T_{i+1}\mathbf B_i.
+$$
+
+The newest transition is on the left. This equation explains the difficulty: every write is transformed by all later decays and delta erasures. Computing those products separately for every output would repeat the same work.
+
+#### 3. Turn relative decay into query/key scaling
+
+Consider a query at row $$i$$ reading a key written at row $$j\le i$$. The retention between them is
+
+$$
+\frac{\gamma^i}{\gamma^j}
+=
+\prod_{r=j+1}^{i}\alpha^r.
+$$
+
+Therefore its decayed similarity can be written as
+
+$$
+q_i^\top\operatorname{Diag}\!\left(\frac{\gamma^i}{\gamma^j}\right)k_j
+=
+(\gamma^i\odot q_i)^\top(k_j/\gamma^j).
+$$
+
+All such scores appear in one matrix multiplication:
+
+$$
+\mathbf A=
+\operatorname{Tril}\!\left[
+(\mathbf Q\odot\mathbf\Gamma)
+(\mathbf K/\mathbf\Gamma)^\top
+\right]
+\in\mathbb R^{C\times C}.
+$$
+
+`Tril` removes future positions but **keeps the diagonal**. For $$i=j$$, the ratio is one: an output reads $$\mathbf S_i$$ after its own write, so token $$i$$ must be allowed to read its own pseudo-value.
+
+#### 4. Fold the delta-rule dependencies with the UT transform
+
+Decay scaling alone is not enough, because a delta write stores the residual after accounting for previous writes. Define
+
+$$
+\mathbf L=
+\operatorname{StrictTril}\!\left[
+\operatorname{Diag}(\boldsymbol\beta)
+(\mathbf\Gamma\odot\mathbf K)
+(\mathbf K/\mathbf\Gamma)^\top
+\right]
+\in\mathbb R^{C\times C}.
+$$
+
+The strict lower triangle contains how each earlier key changes the prediction seen by a later key. The UT transform solves that causal system:
+
+$$
+\mathbf M=(\mathbf I+\mathbf L)^{-1}\operatorname{Diag}(\boldsymbol\beta),
 $$
 
 $$
-\mathbf{O}_{[t]}=\underbrace{(\mathbf{\Gamma}_{[t]} \odot \mathbf{Q}_{[t]}) \mathbf{S}_{[t]}}_{\text{inter-chunk}}+\underbrace{\mathbf{A}_{[t]} \widetilde{\mathbf{V}}_{[t]}}_{\text{intra-chunk}}
+\mathbf W=\mathbf M(\mathbf\Gamma\odot\mathbf K)
+\in\mathbb R^{C\times d_k},
+\qquad
+\mathbf U=\mathbf M\mathbf V
+\in\mathbb R^{C\times d_v}.
 $$
 
-Two ideas are hiding in there:
+Because $$\mathbf I+\mathbf L$$ is lower triangular with ones on its diagonal, this is a forward substitution rather than a general matrix inverse. The compact **pseudo-values** are
 
-1. **Decay becomes a rescaling.** Multiplying queries by $$\gamma^{i}$$ and dividing keys by $$\gamma^{j}$$ makes each entry of $$\mathbf{A}$$ carry exactly the decay $$\gamma^{j+1 \to i}$$ between those two positions — so a whole chunk of gated interactions is one masked matmul.
-2. **The delta corrections factor out.** The chain of rank-1 erase operators inside the chunk is folded by the *UT transform* into $$\widetilde{\mathbf{V}}_{[t]} = \mathbf{U}_{[t]} - \mathbf{W}_{[t]}\mathbf{S}_{[t]}$$, a per-chunk "pseudo value" that already accounts for what earlier tokens in the chunk overwrote.
+$$
+\widetilde{\mathbf V}
+=
+\mathbf U-\mathbf W\mathbf S_{\mathrm{in}}
+\in\mathbb R^{C\times d_v}.
+$$
 
-Written out in NumPy, the chunkwise form reproduces the token-by-token loop to $$10^{-16}$$ — it is an exact rewrite, not an approximation, and that is the whole reason KDA can be trained at scale.
+The two terms have direct meanings: $$\mathbf U$$ contains mutually corrected current-chunk values, while $$\mathbf W\mathbf S_{\mathrm{in}}$$ subtracts what the incoming state already predicts. Thus each row of $$\widetilde{\mathbf V}$$ is the effective residual that token contributes after all earlier in-chunk corrections.
+
+#### 5. Produce every output in the chunk
+
+Once $$\widetilde{\mathbf V}$$ is known,
+
+$$
+\boxed{
+\mathbf O=
+\underbrace{(\mathbf\Gamma\odot\mathbf Q)\mathbf S_{\mathrm{in}}}_{\text{memory from earlier chunks}}
++
+\underbrace{\mathbf A\widetilde{\mathbf V}}_{\text{writes in this chunk}}
+}
+$$
+
+has shape $$C\times d_v$$. The first term decays and queries the state entering the chunk. The second is a causal weighted sum of corrected writes from the current chunk. This is Kimi K3 Eq. 4.
+
+The state handed to the next chunk is computed from the same pseudo-values:
+
+$$
+\boxed{
+\mathbf S_{\mathrm{out}}
+=
+\operatorname{Diag}(\gamma^C)\mathbf S_{\mathrm{in}}
++
+(\mathbf\Delta\odot\mathbf K)^\top\widetilde{\mathbf V}
+}
+$$
+
+where row $$i$$ of $$\mathbf\Delta$$ is the retention *after* that write,
+
+$$
+\Delta_i=\prod_{r=i+1}^{C}\alpha^r,
+$$
+
+with an empty product of one for the last token. The incoming state experiences all $$C$$ decays; a write at position $$i$$ experiences only later decays.
+
+#### 6. What is actually parallel?
+
+The chunks remain recurrent: $$\mathbf S_{\mathrm{out}}$$ from chunk $$t$$ is $$\mathbf S_{\mathrm{in}}$$ for chunk $$t+1$$. Inside a chunk, the expensive query-key, output, and state-update work is expressed as matrix multiplication. A causal triangular solve remains in the UT transform, so “parallel within a chunk” means **the bulk of the arithmetic is tiled dense work**, not that every operation is independent.
+
+The [CPU tutorial's `official_naive_chunk_kda`](/examples/kda_cpu_tutorial.py) implements this sequence explicitly: cumulative log-decay, lower-triangular UT solve, $$\mathbf W/\mathbf U$$, pseudo-values, causal scores, outputs, and final state. Against token-by-token recurrence it produced maximum output and state differences of $$8.882\times10^{-16}$$ and $$6.661\times10^{-16}$$. The chunkwise algorithm is an exact algebraic rewrite in real arithmetic; different accumulation order and BF16 storage explain small production-kernel differences.
 
 ### What K3 changed relative to Kimi Linear
 
@@ -355,34 +565,243 @@ $$
 
 ShortConv 让每个 token 在变成 key / value 之前先看一个小局部窗口；L2Norm 则保证擦除那一步是干净的投影，而不是任意缩放。
 
-整层写成 NumPy：
+把更新式写成等价的 **衰减 → 预测 → 修正 → 读取** 最容易看懂：
 
 ```python
-S = np.zeros((dk, dv))
-for t in range(T):
-    S = (np.eye(dk) - beta[t] * np.outer(k[t], k[t])) @ (alpha[t][:, None] * S) \
-        + beta[t] * np.outer(k[t], v[t])
-    o[t] = S.T @ q[t]
+decayed_state = row_scale(alpha_t, state)
+prediction = transpose_matrix_vector(decayed_state, key_t)
+error = vector_sub(value_t, prediction)
+state = matrix_add(decayed_state, matrix_scale(beta_t, outer(key_t, error)))
+output = transpose_matrix_vector(state, query_t)
 ```
 
-### 怎么让串行递推跑上 Tensor Core
+这种写法比显式构造 $$\mathbf I-\beta kk^\top$$ 更直观：先按行遗忘，再看衰减后的状态对当前 key 预测出什么，只把预测误差写回去。
 
-这个循环是对的，但在 GPU 上没救：每个 token 一次小小的 rank-1 更新，毫无并行度。解法是 **chunkwise 形式** —— 把序列切成 $$C$$ 个 token 的 chunk，chunk 之间保持递推，chunk 内部完全并行。记 chunk 内的累积衰减 $$\gamma^{r} = \prod_{i \le r} \alpha^i$$，给定入口状态 $$\mathbf{S}_{[t]}$$：
+### 在 CPU 上运行完整教程
+
+[完整的零依赖 Python 教程](/examples/kda_cpu_tutorial.py) 只用标准库。它不是 Kimi K3，也不是高性能 kernel，而是本文公式的一个小型数值实验室。在仓库根目录运行：
+
+```bash
+python3 examples/kda_cpu_tutorial.py
+```
+
+脚本会做五组实验：
+
+1. 写入同一个关联两次，验证 delta rule 不会重复累加；
+2. 用新值覆盖同一个 key，并展示 $$\beta$$ 的作用；
+3. 给状态的不同行施加不同保留率；
+4. 把 UT chunk 形式和逐 token KDA 对齐；
+5. 验证 KDA Context Parallelism 的分段结合律，并比较新旧衰减映射。
+
+我在 CPU 上实际运行过。chunk 的两种算法只差浮点舍入误差：
+
+```text
+Maximum output difference:      8.882e-16
+Maximum final-state difference: 6.661e-16
+Maximum segment difference:     4.441e-16
+All numerical equivalence checks passed.
+```
+
+我还跑了 100 组随机的递推-vs-chunk 测试，以及 100 组随机的分段组合测试，全部通过。它们验证的是教学实现的代数，不代表 FlashKDA CUDA kernel 的速度或低精度数值行为。
+
+### Big-O：哪部分变成线性，哪部分没有
+
+记 $$T$$ 为序列长度，$$H$$ 为 head 数，$$d_k,d_v$$ 为单 head 的 key/value 维度。忽略两种方案共有的 Q/K/V 投影，因果 softmax attention 和递推 KDA 的规模如下：
+
+| 机制 | 序列计算 | decode cache | 下一 token |
+|---|---:|---:|---:|
+| softmax | $$O(HT^2d_k)$$ | $$O(HT(d_k+d_v))$$ | $$O(HT(d_k+d_v))$$ |
+| KDA | $$O(HTd_kd_v)$$ | $$O(Hd_kd_v)$$ | $$O(Hd_kd_v)$$ |
+
+当 $$H,d_k,d_v$$ 是固定的架构常数时，KDA 对序列长度是 $$O(T)$$，持久化 cache 对上下文长度是 $$O(1)$$。“常数”不等于免费：每生成一个 token，仍要读写每个 head 的整个 $$d_k\times d_v$$ 状态。
+
+Kimi K3 取 $$H=96$$、$$d_k=d_v=128$$，所以每个 KDA 层、每条序列的状态有
 
 $$
-\mathbf{A}_{[t]}=\operatorname{Tril}\left[(\mathbf{Q}_{[t]} \odot \mathbf{\Gamma}_{[t]})(\mathbf{K}_{[t]} / \mathbf{\Gamma}_{[t]})^{\top}\right]
+96\times128\times128=1{,}572{,}864
+$$
+
+个元素，BF16 下约 3 MiB。69 个 KDA 层合计约 207 MiB，还没算张量并行切分方式、卷积历史、内存分配和 prefix checkpoint。上下文从 1K 拉到 1M，这块状态本身不会继续长。
+
+Kimi Linear 给出的生产 chunk kernel 单 head attention 计算量是
+
+$$
+6Td_h^2+3TCd_h+TC^2,
+$$
+
+其中 $$C$$ 是 chunk size，$$d_h=d_k=d_v$$。固定 $$C$$ 和 $$d_h$$ 后仍是 $$O(T)$$。教程里的显式 Python 循环是为了可读性，不是为了速度；给它计时，测到的主要是 Python 开销，不是 FlashKDA。
+
+整个 Kimi K3 也不是常数 cache：24 个 MLA 层仍然保存随序列增长的 latent KV cache，并执行全局注意力。69 个 KDA 层只是把大约四分之三 attention stack 的增长拿掉。
+
+### 为什么要用 KDA？
+
+当生成足够长、反复读取不断增大的 KV cache 成为主要成本时，KDA 很有价值：
+
+- **固定大小的递推记忆。** 大部分层用一个状态矩阵取代逐 token KV。
+- **按误差修正。** delta rule 覆盖旧关联，而不是把重复值和过期值一直累加。
+- **多种记忆时标。** channel-wise $$\alpha$$ 让同一 head 同时拥有快忘和慢记的特征。
+- **隐式顺序与近因性。** 有序、随数据变化的转移在 token 顺序改变时也会改变，所以全局层可以使用 NoPE。
+- **精确而适合 GPU 的改写。** 训练时用 chunkwise 矩阵乘，但数学递推没有改变。
+
+代价是容量有限。固定状态会把无关事实混在一起，也可能丢失精确 token 细节，所以 Kimi K3 没有把所有层都换成 KDA，而是保留周期性的全局 MLA。
+
+### Chunkwise parallel form：一步一步推
+
+逐 token 递推很适合 decoding，但不适合训练：第 $$r$$ 个 token 必须等第 $$r-1$$ 个 token 产出状态，直接实现就是连续发射很多小矩阵更新。Chunkwise KDA **没有消灭递推**；它把一个固定大小 chunk 里的大部分工作整理成稠密矩阵乘，只在 chunk 之间顺序传递一个状态。
+
+#### 1. 先把一个 chunk 排成矩阵
+
+一个 chunk 有 $$C$$ 个 token，按行堆叠：
+
+$$
+\mathbf Q,\mathbf K\in\mathbb R^{C\times d_k},\qquad
+\mathbf V,\mathbf O\in\mathbb R^{C\times d_v},\qquad
+\mathbf S_{\mathrm{in}}\in\mathbb R^{d_k\times d_v}.
+$$
+
+对位置 $$1\le i\le j\le C$$，定义逐通道累积保留率
+
+$$
+\gamma^{i\to j}=\prod_{r=i}^{j}\alpha^r,
+\qquad
+\gamma^j=\gamma^{1\to j}.
+$$
+
+这些乘法都在 $$d_k$$ 个 key 通道上逐元素进行。令 $$\mathbf\Gamma\in\mathbb R^{C\times d_k}$$ 逐行堆叠 $$\gamma^1,\ldots,\gamma^C$$。
+
+#### 2. 看清递推里藏着什么
+
+把单 token 转移写成
+
+$$
+\mathbf T_r=(\mathbf I-\beta_r k_rk_r^\top)\operatorname{Diag}(\alpha_r),
+\qquad
+\mathbf B_r=\beta_rk_rv_r^\top.
+$$
+
+走完 chunk 的前 $$r$$ 个 token 后，
+
+$$
+\mathbf S^r=
+\underbrace{\mathbf T_r\mathbf T_{r-1}\cdots\mathbf T_1}_{\mathbf P^r}
+\mathbf S_{\mathrm{in}}
++
+\sum_{i=1}^{r}
+\mathbf T_r\cdots\mathbf T_{i+1}\mathbf B_i.
+$$
+
+最新的转移在最左边。困难也写在式子里：每次写入都会被后续所有衰减和 delta 擦除再次变换。如果给每个输出单独算这些乘积，会反复做大量相同工作。
+
+#### 3. 把相对衰减变成 query/key 缩放
+
+位置 $$i$$ 的 query 读取位置 $$j\le i$$ 写下的 key，两者之间的保留率是
+
+$$
+\frac{\gamma^i}{\gamma^j}
+=
+\prod_{r=j+1}^{i}\alpha^r.
+$$
+
+所以带衰减的相似度可以写成
+
+$$
+q_i^\top\operatorname{Diag}\!\left(\frac{\gamma^i}{\gamma^j}\right)k_j
+=
+(\gamma^i\odot q_i)^\top(k_j/\gamma^j).
+$$
+
+所有位置对的分数一次矩阵乘就能得到：
+
+$$
+\mathbf A=
+\operatorname{Tril}\!\left[
+(\mathbf Q\odot\mathbf\Gamma)
+(\mathbf K/\mathbf\Gamma)^\top
+\right]
+\in\mathbb R^{C\times C}.
+$$
+
+`Tril` 去掉未来位置，但 **保留对角线**。当 $$i=j$$ 时比例是 1；输出读取的是当前 token 已经写入后的 $$\mathbf S_i$$，所以 token $$i$$ 必须能读自己的伪 value。
+
+#### 4. 用 UT transform 折叠 delta-rule 依赖
+
+只有衰减缩放还不够，因为 delta 写入的是扣除先前预测后的残差。定义
+
+$$
+\mathbf L=
+\operatorname{StrictTril}\!\left[
+\operatorname{Diag}(\boldsymbol\beta)
+(\mathbf\Gamma\odot\mathbf K)
+(\mathbf K/\mathbf\Gamma)^\top
+\right]
+\in\mathbb R^{C\times C}.
+$$
+
+严格下三角部分描述「更早的 key 如何改变后续 key 看到的预测」。UT transform 解这个因果系统：
+
+$$
+\mathbf M=(\mathbf I+\mathbf L)^{-1}\operatorname{Diag}(\boldsymbol\beta),
 $$
 
 $$
-\mathbf{O}_{[t]}=\underbrace{(\mathbf{\Gamma}_{[t]} \odot \mathbf{Q}_{[t]}) \mathbf{S}_{[t]}}_{\text{inter-chunk}}+\underbrace{\mathbf{A}_{[t]} \widetilde{\mathbf{V}}_{[t]}}_{\text{intra-chunk}}
+\mathbf W=\mathbf M(\mathbf\Gamma\odot\mathbf K)
+\in\mathbb R^{C\times d_k},
+\qquad
+\mathbf U=\mathbf M\mathbf V
+\in\mathbb R^{C\times d_v}.
 $$
 
-里面藏着两个技巧：
+因为 $$\mathbf I+\mathbf L$$ 是对角线为 1 的下三角矩阵，这一步实际用前向代入，不是通用矩阵求逆。紧凑的 **伪 value** 是
 
-1. **衰减变成缩放。** query 乘 $$\gamma^{i}$$、key 除 $$\gamma^{j}$$，$$\mathbf{A}$$ 的每个元素就正好带上两个位置之间的衰减 $$\gamma^{j+1 \to i}$$ —— 整个 chunk 的带门控交互变成一次带 mask 的矩阵乘。
-2. **delta 修正可以提出来。** chunk 内那一串 rank-1 擦除算子，被 *UT transform* 折叠成 $$\widetilde{\mathbf{V}}_{[t]} = \mathbf{U}_{[t]} - \mathbf{W}_{[t]}\mathbf{S}_{[t]}$$，一个已经把「chunk 内更早的 token 覆盖了什么」算进去的伪 value。
+$$
+\widetilde{\mathbf V}
+=
+\mathbf U-\mathbf W\mathbf S_{\mathrm{in}}
+\in\mathbb R^{C\times d_v}.
+$$
 
-把 chunkwise 形式写成 NumPy 去对齐逐 token 循环，误差在 $$10^{-16}$$ 量级 —— 它是精确改写，不是近似，这也正是 KDA 能大规模训练的原因。
+两个项都有直接含义：$$\mathbf U$$ 包含 chunk 内彼此修正后的当前 value，$$\mathbf W\mathbf S_{\mathrm{in}}$$ 则扣掉入口状态已经能够预测的部分。于是 $$\widetilde{\mathbf V}$$ 的每一行，都是算入所有更早 chunk 内修正后，这个 token 真正贡献的残差。
+
+#### 5. 一次算出 chunk 里的所有输出
+
+得到 $$\widetilde{\mathbf V}$$ 后，
+
+$$
+\boxed{
+\mathbf O=
+\underbrace{(\mathbf\Gamma\odot\mathbf Q)\mathbf S_{\mathrm{in}}}_{\text{来自更早 chunk 的记忆}}
++
+\underbrace{\mathbf A\widetilde{\mathbf V}}_{\text{当前 chunk 的写入}}
+}
+$$
+
+形状是 $$C\times d_v$$。第一项对 chunk 入口状态做衰减后查询；第二项是当前 chunk 中修正后写入的因果加权和。这就是 Kimi K3 的 Eq. 4。
+
+传给下一个 chunk 的状态也从同一组伪 value 得到：
+
+$$
+\boxed{
+\mathbf S_{\mathrm{out}}
+=
+\operatorname{Diag}(\gamma^C)\mathbf S_{\mathrm{in}}
++
+(\mathbf\Delta\odot\mathbf K)^\top\widetilde{\mathbf V}
+}
+$$
+
+其中 $$\mathbf\Delta$$ 的第 $$i$$ 行是该次写入 *之后* 经历的保留率，
+
+$$
+\Delta_i=\prod_{r=i+1}^{C}\alpha^r,
+$$
+
+最后一个 token 后面没有衰减，空乘积按 1 处理。入口状态经历全部 $$C$$ 次衰减；位置 $$i$$ 的写入只经历它后面的衰减。
+
+#### 6. 到底哪里并行？
+
+chunk 之间仍然递推：第 $$t$$ 个 chunk 的 $$\mathbf S_{\mathrm{out}}$$ 就是第 $$t+1$$ 个 chunk 的 $$\mathbf S_{\mathrm{in}}$$。chunk 内部则把昂贵的 query-key、输出和状态更新整理成矩阵乘。UT transform 里仍有一次因果三角求解，所以「chunk 内并行」的准确含义是 **绝大部分算术变成可分块的稠密计算**，而不是每一步都完全独立。
+
+[CPU 教程里的 `official_naive_chunk_kda`](/examples/kda_cpu_tutorial.py) 显式走完这条链：累积 log-decay、下三角 UT 求解、$$\mathbf W/\mathbf U$$、伪 value、因果分数、输出和最终状态。它和逐 token 递推相比，最大输出误差与状态误差分别是 $$8.882\times10^{-16}$$ 和 $$6.661\times10^{-16}$$。因此 chunkwise 在实数算术下是精确代数改写；生产 kernel 的微小差异来自累加顺序和 BF16 状态存储。
 
 ### 相对 Kimi Linear，K3 改了什么
 
