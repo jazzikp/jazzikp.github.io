@@ -12,7 +12,8 @@
   "maxImageBytes": 130000,
   "maxImageNote": "img/social-card.jpg is the largest; it is never fetched by a browser, only by link unfurlers.",
   "maxFontBytes": 40000,
-  "maxHtmlBytes": 60000,
+  "maxHtmlBytes": 80000,
+  "maxHtmlNote": "Bilingual long-form technical posts ship both language panels in one HTML document; the Kimi K3 article is 78 KB after adding its CPU tutorial, complexity analysis, and full chunkwise derivation.",
 
   "maxThirdPartyOrigins": 0,
   "allowedDeferredThirdParty": ["cdnjs.cloudflare.com"],
