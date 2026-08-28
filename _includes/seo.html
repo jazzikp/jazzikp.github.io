@@ -105,7 +105,8 @@
   "image": {{ seo_image | jsonify }},
   "jobTitle": "Member of Technical Staff",
   "worksFor": { "@type": "Organization", "name": "SpaceXAI / xAI" },
-  "description": {{ site.description | jsonify }},
+  "description": {{ site.description | jsonify }},{% if site.email %}
+  "email": {{ site.email | jsonify }},{% endif %}
   "sameAs": [
     {{ "https://github.com/" | append: site.github_username | jsonify }},
     {{ "https://www.linkedin.com/in/" | append: site.linkedin_username | append: "/" | jsonify }},
