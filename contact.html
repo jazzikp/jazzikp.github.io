@@ -25,5 +25,8 @@ permalink: /contact/
         {% else %}
         <a class="btn primary" href="https://www.linkedin.com/in/{{ site.linkedin_username }}/" target="_blank" rel="noopener">Say hello on LinkedIn</a>
         {% endif %}
+        {% if site.email %}
+        <p>Or email <a href="mailto:{{ site.email }}">{{ site.email }}</a>.</p>
+        {% endif %}
     </section>
 </div>
