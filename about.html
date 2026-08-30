@@ -18,11 +18,13 @@ eyebrow: Zhejian Peng
         <div data-lang-panel="en">
             <p>I'm <strong>Zhejian Peng</strong>. At <a href="https://x.ai/">xAI</a> I work on the <strong>Phoenix</strong> ranking model and <strong>Grok Coding RL</strong> — training Grok to write and reason about real code.</p>
             <p>The through-line is the same: take a messy real-world decision — what to stock, what to show, what to train — and make the model useful at scale.</p>
+            {% if site.email %}<p>Email: <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>{% endif %}
         </div>
 
         <div data-lang-panel="zh" hidden>
             <p>我是<strong>Zhejian Peng</strong>。在 <a href="https://x.ai/">xAI</a> 做 <strong>Phoenix</strong> 排序模型和 <strong>Grok Coding RL</strong>，训练 Grok 写代码、理解真实软件。</p>
             <p>一条线贯穿下来：把现实里难决策的问题 —— 补什么货、推什么内容、怎么训练 —— 做成能上线的模型。</p>
+            {% if site.email %}<p>邮箱：<a href="mailto:{{ site.email }}">{{ site.email }}</a></p>{% endif %}
         </div>
     </div>
 </div>
