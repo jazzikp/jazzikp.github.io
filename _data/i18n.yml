@@ -25,6 +25,9 @@ nav:
   contact:
     en: "Contact"
     zh: "联系"
+  inner_circle:
+    en: "Inner Circle"
+    zh: "内部圈子"
   menu:
     en: "Menu"
     zh: "菜单"

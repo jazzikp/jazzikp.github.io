@@ -1,0 +1,48 @@
+---
+title: Inner Circle
+title_zh: 内部圈子
+layout: page
+permalink: /inner-circle/
+eyebrow: Invite only
+eyebrow_zh: 仅限受邀
+description: Notes on life at xAI, for people I have shared an invitation code with.
+description_zh: 关于在 xAI 工作与生活的记录，只对收到邀请码的朋友开放。
+robots: noindex, nofollow
+sitemap: false
+---
+{%- comment -%}
+  Everything readable here is encrypted. The posts are published by
+  scripts/private.mjs into inner-circle/data/, and js/private.js decrypts them
+  in the browser with the reader's invitation code. See README, "Invite-only
+  posts".
+{%- endcomment -%}
+<div class="inner-circle" id="inner-circle">
+    <form class="ic-lock" id="ic-lock" autocomplete="off">
+        <label for="ic-code" data-i18n-zh="邀请码">Invitation code</label>
+        <div class="ic-row">
+            <input id="ic-code" name="code" type="text" inputmode="text" autocapitalize="characters"
+                   spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="40" required>
+            <button class="btn primary" type="submit" id="ic-submit" data-i18n-zh="解锁">Unlock</button>
+        </div>
+        <p class="ic-status" id="ic-status" role="status" aria-live="polite" hidden></p>
+        <p class="ic-note" data-i18n-zh="解密在你的浏览器里完成，邀请码不会发送到任何地方。">Decryption happens in your browser. Your code is never sent anywhere.</p>
+    </form>
+
+    <div class="ic-open" id="ic-open" hidden>
+        <div class="ic-bar">
+            <a href="#" id="ic-back" hidden data-i18n-zh="← 全部文章">← All posts</a>
+            <button class="btn ghost" type="button" id="ic-leave" data-i18n-zh="锁定">Lock</button>
+        </div>
+        <p class="ic-empty" id="ic-empty" hidden data-i18n-zh="这里还没有文章。">Nothing is published here yet.</p>
+        <div class="post-list" id="ic-list"></div>
+        <article class="ic-article" id="ic-article" hidden>
+            <header class="ic-article-head">
+                <h2 id="ic-title"></h2>
+                <p class="ic-subtitle" id="ic-subtitle"></p>
+                <p class="ic-meta" id="ic-meta"></p>
+            </header>
+            <div class="prose" id="ic-body"></div>
+        </article>
+    </div>
+</div>
+<script defer src="{{ site.baseurl }}/js/private.js?v={{ site.asset_version }}"></script>

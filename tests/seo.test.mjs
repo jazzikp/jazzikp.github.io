@@ -120,7 +120,7 @@ describe("seo", () => {
   });
 
   test("utility pages are marked noindex and kept out of the sitemap", () => {
-    for (const page of ["/write/", "/404.html", "/offline.html"]) {
+    for (const page of ["/write/", "/404.html", "/offline.html", "/inner-circle/"]) {
       assert.match(html.get(page), /<meta name="robots" content="noindex/, `${page} is indexable`);
     }
   });

@@ -59,6 +59,7 @@ exclude:
   - scripts
   - tests
   - img/src          # full-resolution originals; scripts/optimize-images.sh derives what ships
+  - private          # invite-only drafts and codes (git-ignored); only inner-circle/data/ ships
 
 
 # ---------------------------------------------------------------------------

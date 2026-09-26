@@ -8,6 +8,7 @@ import { test, describe, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { startSite } from "./helpers/site.mjs";
+import { encryptBundle } from "../scripts/private-crypto.mjs";
 
 const PROXY = /workers\.dev/;
 
@@ -342,6 +343,48 @@ describe("browser", () => {
       !cached.some((u) => /workers\.dev/.test(u)),
       "a Grok proxy response was written to the cache"
     );
+    await context.close();
+  });
+  test("the invite-only section unlocks with a code and locks again", async () => {
+    // A throwaway bundle in the real format; the site's own data is never needed.
+    const code = "TEST-CODE-AAAA-BBBB";
+    const { manifest, files } = await encryptBundle({
+      codes: [code],
+      index: { posts: [{ id: "p1", slug: "hello", title: "Hello, circle", subtitle: "Fixture", date: "2026-09-01", minutes: 1 }] },
+      posts: { p1: { html: "<p>Only <strong>invitees</strong> see this.</p>" } },
+      iterations: 1000,
+    });
+    const { context, page, errors } = await open("/inner-circle/");
+    await context.route(/\/inner-circle\/data\//, (route) => {
+      const name = new URL(route.request().url()).pathname.split("/").pop();
+      const body = name === "manifest.json" ? manifest : files[name.replace(/\.json$/, "")];
+      return body
+        ? route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) })
+        : route.fulfill({ status: 404, body: "" });
+    });
+
+    assert.ok(await page.locator("#ic-open").isHidden(), "content visible before unlocking");
+    await page.fill("#ic-code", "WRNG-CODE-AAAA-BBBB");
+    await page.click("#ic-submit");
+    await page.locator("#ic-status.is-error").waitFor({ timeout: 10000 });
+    assert.ok(await page.locator("#ic-open").isHidden(), "a wrong code revealed the section");
+
+    await page.fill("#ic-code", "test code aaaa bbbb"); // case and separators are forgiven
+    await page.click("#ic-submit");
+    await page.locator("#ic-list .post-card").waitFor({ timeout: 10000 });
+    assert.equal(await page.locator("#ic-list h2").innerText(), "Hello, circle");
+
+    await page.click("#ic-list .post-card");
+    await page.locator("#ic-article:not([hidden])").waitFor();
+    assert.equal(await page.locator("#ic-body strong").innerText(), "invitees");
+
+    await page.reload({ waitUntil: "networkidle" });
+    await page.locator("#ic-article:not([hidden])").waitFor({ timeout: 10000 });
+
+    await page.click("#ic-leave");
+    assert.ok(await page.locator("#ic-open").isHidden(), "Lock left the posts on screen");
+    assert.equal(await page.evaluate(() => sessionStorage.getItem("inner-circle-key")), null);
+    assert.deepEqual(errors, []);
     await context.close();
   });
 });

@@ -47,3 +47,7 @@ Gemfile.lock
 js/grok-config.js
 .wrangler
 .dev.vars
+
+# Invite-only posts: plaintext drafts and invitation codes never leave this folder.
+# scripts/private.mjs publishes only ciphertext, to inner-circle/data/.
+/private/

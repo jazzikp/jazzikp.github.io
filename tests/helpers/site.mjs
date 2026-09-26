@@ -93,6 +93,7 @@ export const PAGES = [
   "/contact/",
   "/reports/",
   "/write/",
+  "/inner-circle/",
   "/404.html",
   "/offline.html",
   "/2019/04/03/CS224n/",

@@ -24,6 +24,48 @@ Your note here.
 
 Then delete the matching row in `_data/upcoming_reports.yml`.
 
+## Invite-only posts
+
+`/inner-circle/` holds posts that only people with an invitation code can
+read. You write them in `private/`, which is git-ignored and excluded from
+Jekyll. A script encrypts them, and only the ciphertext is committed, to
+`inner-circle/data/`. Readers type their code on the page, and the browser
+decrypts the posts. The code never leaves their machine.
+
+```bash
+npm run private -- new "First months at xAI"   # creates private/posts/2026-09-26-first-months-at-xai.md
+npm run private -- invite "Alice"              # prints Alice's code and republishes
+npm run private -- publish                     # after writing or editing a post
+npm run private -- list                        # who has which code
+npm run private -- revoke "Alice"              # re-encrypts everything under a new key
+git add inner-circle/data && git commit -m "Update inner circle"
+```
+
+Posts are Markdown with `title`, optional `subtitle`, `date`, and
+`draft: true` to hold a post back. They render through kramdown exactly like
+public posts. Images and maths are not supported yet.
+
+Everything under `private/` exists only on your machine: the drafts, and
+`codes.json` with each invitee's code. Back it up somewhere private. If you
+lose it, generate new codes and republish.
+
+How the encryption works:
+
+- Each publish encrypts every post with a fresh random AES-256-GCM key.
+- Each invitation code wraps that key through PBKDF2-SHA-256.
+- File names are random, and decoy slots hide how many codes exist.
+- Codes are generated with about 78 random bits, so they cannot be guessed.
+  Hand-picked codes are not supported, because anyone can download the
+  ciphertext and try passwords offline.
+
+Two limits come with the design:
+
+- **Anyone with a code can read everything, and copy it.** Treat the section
+  as shared with every invitee, never as secret from them.
+- **Revoking a code only protects what you publish afterwards.** The repo is
+  public, so git history keeps older ciphertext that the revoked code can
+  still open.
+
 ## Paid consult
 
 GitHub Pages cannot charge cards. Best setup:
