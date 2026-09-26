@@ -1,5 +1,5 @@
 /*
- * Encryption for the invite-only section (/inner-circle/).
+ * Encryption for the invite-only section (/secret-life/).
  *
  * Shared by scripts/private.mjs, which writes the bundle, and the tests. The
  * browser side is js/private.js and must stay in step with this format.

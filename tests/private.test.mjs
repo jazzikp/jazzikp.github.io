@@ -2,7 +2,7 @@
  * The invite-only section never publishes anything readable.
  *
  * Drafts and invitation codes live in the git-ignored private/ folder;
- * scripts/private.mjs writes only ciphertext to inner-circle/data/. These
+ * scripts/private.mjs writes only ciphertext to secret-life/data/. These
  * tests guard the ways that could go wrong: the folder being committed or
  * built, plaintext slipping into the data files, the page being indexed or
  * fed to the chat, and the encryption format itself.
@@ -50,9 +50,9 @@ describe("invite-only section", () => {
   });
 
   test("the published data is ciphertext only", async () => {
-    await assertCiphertextOnly(join(ROOT, "inner-circle/data"));
+    await assertCiphertextOnly(join(ROOT, "secret-life/data"));
     assertBuilt();
-    await assertCiphertextOnly(join(SITE, "inner-circle/data"));
+    await assertCiphertextOnly(join(SITE, "secret-life/data"));
   });
 
   test("the build never publishes private/", () => {
@@ -63,9 +63,9 @@ describe("invite-only section", () => {
   test("the page stays out of search and out of the chat corpus", async () => {
     assertBuilt();
     const sitemap = await readFile(join(SITE, "sitemap.xml"), "utf8");
-    assert.ok(!sitemap.includes("inner-circle"), "the sitemap lists the invite-only section");
+    assert.ok(!sitemap.includes("secret-life"), "the sitemap lists the invite-only section");
     const corpus = await readFile(join(SITE, "corpus.json"), "utf8");
-    assert.ok(!corpus.includes("inner-circle"), "the chat corpus includes the invite-only section");
+    assert.ok(!corpus.includes("secret-life"), "the chat corpus includes the invite-only section");
   });
 
   test("codes unlock their own bundle and nothing else", async () => {

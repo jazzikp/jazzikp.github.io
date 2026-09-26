@@ -26,7 +26,7 @@ npm test
 | `math.test.mjs` | Posts use `$$…$$` rather than raw `\(…\)`, which kramdown silently strips; no unrendered LaTeX survives into the prose; MathJax is loaded (and async) wherever maths appears; and the number of expressions written matches the number that reach the page. |
 | `secrets.test.mjs` | `_config.yml` and the rest of the source tree do not assign a Gitalk-style OAuth `clientSecret` / `clientID`. The published site must not ship those credentials again. |
 | `chat-corpus.test.mjs` | The worker's retrieval over `/corpus.json` lists every page and post in the catalog and pulls the matching excerpt (KDA, bio) into the system prompt. |
-| `private.test.mjs` | The invite-only section publishes only ciphertext: `private/` is git-ignored, untracked and never built; `inner-circle/data/` holds nothing but base64 `iv`/`data` boxes; the page is kept out of the sitemap and the chat corpus; and codes unlock their own bundle and nothing else. |
+| `private.test.mjs` | The invite-only section publishes only ciphertext: `private/` is git-ignored, untracked and never built; `secret-life/data/` holds nothing but base64 `iv`/`data` boxes; the page is kept out of the sitemap and the chat corpus; and codes unlock their own bundle and nothing else. |
 | `browser.test.mjs` | Real Chromium: no console errors, theme toggle and persistence, lazy chat, blog search and tag filters, language toggle, copy buttons, heading anchors, lazy comments, image distortion, layout shift, mobile overflow, keyboard focus order, offline rendering through the service worker, and unlocking the invite-only section with a code. |
 
 The chat and comments backend is stubbed with Playwright routing, so the suite

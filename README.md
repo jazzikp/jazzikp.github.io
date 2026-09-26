@@ -26,10 +26,10 @@ Then delete the matching row in `_data/upcoming_reports.yml`.
 
 ## Invite-only posts
 
-`/inner-circle/` holds posts that only people with an invitation code can
+`/secret-life/` holds posts that only people with an invitation code can
 read. You write them in `private/`, which is git-ignored and excluded from
 Jekyll. A script encrypts them, and only the ciphertext is committed, to
-`inner-circle/data/`. Readers type their code on the page, and the browser
+`secret-life/data/`. Readers type their code on the page, and the browser
 decrypts the posts. The code never leaves their machine.
 
 ```bash
@@ -38,7 +38,7 @@ npm run private -- invite "Alice"              # prints Alice's code and republi
 npm run private -- publish                     # after writing or editing a post
 npm run private -- list                        # who has which code
 npm run private -- revoke "Alice"              # re-encrypts everything under a new key
-git add inner-circle/data && git commit -m "Update inner circle"
+git add secret-life/data && git commit -m "Update secret life"
 ```
 
 Posts are Markdown with `title`, optional `subtitle`, `date`, and

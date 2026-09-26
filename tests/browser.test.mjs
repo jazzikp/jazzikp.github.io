@@ -354,8 +354,8 @@ describe("browser", () => {
       posts: { p1: { html: "<p>Only <strong>invitees</strong> see this.</p>" } },
       iterations: 1000,
     });
-    const { context, page, errors } = await open("/inner-circle/");
-    await context.route(/\/inner-circle\/data\//, (route) => {
+    const { context, page, errors } = await open("/secret-life/");
+    await context.route(/\/secret-life\/data\//, (route) => {
       const name = new URL(route.request().url()).pathname.split("/").pop();
       const body = name === "manifest.json" ? manifest : files[name.replace(/\.json$/, "")];
       return body
@@ -383,7 +383,7 @@ describe("browser", () => {
 
     await page.click("#ic-leave");
     assert.ok(await page.locator("#ic-open").isHidden(), "Lock left the posts on screen");
-    assert.equal(await page.evaluate(() => sessionStorage.getItem("inner-circle-key")), null);
+    assert.equal(await page.evaluate(() => sessionStorage.getItem("secret-life-key")), null);
     assert.deepEqual(errors, []);
     await context.close();
   });

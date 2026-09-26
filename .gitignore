@@ -49,5 +49,5 @@ js/grok-config.js
 .dev.vars
 
 # Invite-only posts: plaintext drafts and invitation codes never leave this folder.
-# scripts/private.mjs publishes only ciphertext, to inner-circle/data/.
+# scripts/private.mjs publishes only ciphertext, to secret-life/data/.
 /private/

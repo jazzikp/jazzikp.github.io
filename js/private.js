@@ -9,11 +9,11 @@
 (function () {
   "use strict";
 
-  var root = document.getElementById("inner-circle");
+  var root = document.getElementById("secret-life");
   if (!root || !window.crypto || !crypto.subtle) return;
 
-  var DATA = "/inner-circle/data/";
-  var SESSION_KEY = "inner-circle-key";
+  var DATA = "/secret-life/data/";
+  var SESSION_KEY = "secret-life-key";
   var subtle = crypto.subtle;
 
   var lockForm = document.getElementById("ic-lock");

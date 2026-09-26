@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * Invite-only posts: write in private/, publish ciphertext to inner-circle/data/.
+ * Invite-only posts: write in private/, publish ciphertext to secret-life/data/.
  *
  *   npm run private -- new "Title"        start a post in private/posts/
  *   npm run private -- invite "Label"     create a code for someone, then republish
@@ -9,7 +9,7 @@
  *   npm run private -- publish            encrypt every post in private/posts/
  *
  * private/ is git-ignored and excluded from Jekyll. Nothing readable leaves it:
- * inner-circle/data/ only ever holds the output of scripts/private-crypto.mjs.
+ * secret-life/data/ only ever holds the output of scripts/private-crypto.mjs.
  *
  * PRIVATE_DIR and PRIVATE_OUT override both paths (used by tests and dry runs).
  */
@@ -23,7 +23,7 @@ import { encryptBundle, newCode } from "./private-crypto.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = resolve(process.env.PRIVATE_DIR || join(ROOT, "private"));
-const OUT = resolve(process.env.PRIVATE_OUT || join(ROOT, "inner-circle/data"));
+const OUT = resolve(process.env.PRIVATE_OUT || join(ROOT, "secret-life/data"));
 const POSTS = join(DIR, "posts");
 const CODES = join(DIR, "codes.json");
 
