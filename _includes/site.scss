@@ -22,6 +22,7 @@
 @import "projects";
 @import "contact";
 @import "write";
+@import "private";     // invite-only section
 
 @import "responsive";  // mobile overrides, must follow the components
 @import "theme-dark";  // dark-mode overrides, last word on the cascade

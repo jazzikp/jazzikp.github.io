@@ -16,6 +16,7 @@
     "images": "./scripts/optimize-images.sh",
     "fonts": "node scripts/fetch-fonts.mjs",
     "translate": "node scripts/translate.mjs",
-    "translate:check": "node scripts/translate.mjs --check"
+    "translate:check": "node scripts/translate.mjs --check",
+    "private": "node scripts/private.mjs"
   }
 }

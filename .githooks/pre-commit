@@ -1,0 +1,40 @@
+#!/bin/sh
+# Blocks commits that would put readable invite-only content on GitHub.
+#
+#   1. Nothing under private/ (drafts, codes.json), even if force-added past .gitignore.
+#   2. Files in secret-life/data/ must be ciphertext only: base64 iv/data boxes,
+#      as written by scripts/private.mjs.
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+set -e
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+leaked=$(printf '%s\n' "$staged" | grep -E '^private/' || true)
+if [ -n "$leaked" ]; then
+  echo "pre-commit: refusing to commit files from private/ (plaintext drafts or codes):" >&2
+  printf '  %s\n' $leaked >&2
+  echo "Unstage them with: git restore --staged private/" >&2
+  exit 1
+fi
+
+data=$(printf '%s\n' "$staged" | grep -E '^secret-life/data/' || true)
+[ -z "$data" ] && exit 0
+
+for f in $data; do
+  git show ":$f" | node -e '
+    const name = process.argv[1];
+    let src = "";
+    process.stdin.on("data", (d) => (src += d)).on("end", () => {
+      const b64 = (s) => typeof s === "string" && /^[A-Za-z0-9+/]+={0,2}$/.test(s);
+      const box = (o) => o && Object.keys(o).sort().join() === "data,iv" && b64(o.iv) && b64(o.data);
+      let ok = false;
+      try {
+        const j = JSON.parse(src);
+        ok = /manifest\.json$/.test(name)
+          ? Object.keys(j).sort().join() === "index,kdf,slots,v" && box(j.index) && j.slots.every(box)
+          : /\/[A-Za-z0-9_-]{12}\.json$/.test(name) && box(j);
+      } catch {}
+      if (!ok) { console.error(`pre-commit: ${name} is not ciphertext written by scripts/private.mjs`); process.exit(1); }
+    });' "$f"
+done

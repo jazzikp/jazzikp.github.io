@@ -24,6 +24,71 @@ Your note here.
 
 Then delete the matching row in `_data/upcoming_reports.yml`.
 
+## Invite-only posts
+
+`/secret-life/` holds posts that only people with an invitation code can
+read. You write them in `private/`, which is git-ignored and excluded from
+Jekyll. A script encrypts them, and only the ciphertext is committed, to
+`secret-life/data/`. Readers type their code on the page, and the browser
+decrypts the posts. The code never leaves their machine.
+
+```bash
+npm run private -- new "First months at xAI"   # creates private/posts/2026-09-26-first-months-at-xai.md
+npm run private -- invite "Alice"              # prints a random code for Alice and republishes
+npm run private -- invite "Bob" --code "your own phrase"   # or choose the code yourself
+npm run private -- publish                     # after writing or editing a post
+npm run private -- list                        # who has which code
+npm run private -- revoke "Alice"              # re-encrypts everything under a new key
+git add secret-life/data && git commit -m "Update secret life"
+```
+
+Posts are Markdown with `title`, optional `subtitle`, `date`, and
+`draft: true` to hold a post back. They render through kramdown exactly like
+public posts. Images and maths are not supported yet.
+
+Everything under `private/` exists only on your machine: the drafts, and
+`codes.json` with each invitee's code. Back it up somewhere private. If you
+lose it, generate new codes and republish.
+
+Codes are matched ignoring case, spaces and punctuation, so `jazzik is chad`
+opens the same posts as `jazzikIsChad`.
+
+How the content stays off GitHub:
+
+- **Drafts and codes are never committed.** `private/` is in `.gitignore` and
+  in Jekyll's `exclude`. `npm run private` refuses to run if the folder is not
+  ignored or git tracks anything in it.
+- **A pre-commit hook blocks leaks.** `.githooks/pre-commit` refuses any
+  commit that includes a file from `private/`, even one force-added with
+  `git add -f`. It also refuses a `secret-life/data/` file that is not pure
+  ciphertext. Enable it once per clone with
+  `git config core.hooksPath .githooks`.
+- **Only ciphertext is published.** Titles, dates and post bodies are all
+  encrypted, and file names are random. CI fails if any data file holds
+  anything but base64 `iv`/`data` fields.
+
+How the encryption works:
+
+- Each publish encrypts every post with a fresh random AES-256-GCM key.
+- Each invitation code wraps that key through PBKDF2-SHA-256 (250,000
+  iterations).
+- Decoy slots hide how many codes exist.
+
+**The code is the only lock.** Anyone can download the encrypted files from
+GitHub and try guesses offline, as fast as their hardware allows. A random
+code from `invite` (about 78 bits) cannot be guessed. A chosen phrase is only
+as strong as it is unguessable, so names, catchphrases and short phrases are
+the first things a determined guesser tries. The CLI warns when a chosen code
+is shorter than 20 characters.
+
+Two limits come with the design:
+
+- **Anyone with a code can read everything, and copy it.** Treat the section
+  as shared with every invitee, never as secret from them.
+- **Revoking a code only protects what you publish afterwards.** The repo is
+  public, so git history keeps older ciphertext that the revoked code can
+  still open.
+
 ## Paid consult
 
 GitHub Pages cannot charge cards. Best setup:
