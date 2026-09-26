@@ -50,8 +50,9 @@ Everything under `private/` exists only on your machine: the drafts, and
 `codes.json` with each invitee's code. Back it up somewhere private. If you
 lose it, generate new codes and republish.
 
-Codes are matched ignoring case, spaces and punctuation, so `jazzik is chad`
-opens the same posts as `jazzikIsChad`.
+Codes must be typed exactly, case included: `jazzikIsChad` works, while
+`JAZZIKISCHAD` and `jazzik is chad` do not. Only spaces before or after the
+code are ignored, so a pasted code still works.
 
 How the content stays off GitHub:
 

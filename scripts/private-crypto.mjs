@@ -19,6 +19,7 @@
  * protects the posts: the ciphertext is public, so a guessable code can be
  * brute-forced offline however many iterations each guess costs. The author
  * may still choose a phrase (`invite --code`); the CLI warns when it is short.
+ * Matching is exact and case-sensitive.
  */
 import { webcrypto } from "node:crypto";
 
@@ -43,9 +44,13 @@ export function newCode() {
   return chars.join("").match(/.{4}/g).join("-");
 }
 
-/** What the reader typed, reduced to the canonical form codes are derived from. js/private.js mirrors this. */
+/**
+ * Codes must match exactly, case included. Only surrounding whitespace is
+ * dropped, so a pasted code with a trailing space still works.
+ * js/private.js mirrors this.
+ */
 export function normalizeCode(input) {
-  return String(input).toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return String(input).trim();
 }
 
 async function deriveKek(code, salt, iterations) {

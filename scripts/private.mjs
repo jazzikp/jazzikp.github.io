@@ -67,7 +67,7 @@ async function cmdNew(title) {
   console.log(`created ${relative(ROOT, file)}`);
 }
 
-// Codes are matched ignoring case, spaces and punctuation (see normalizeCode).
+// Codes match exactly, case included (see normalizeCode).
 const MIN_CUSTOM = 8;
 const STRONG_CUSTOM = 20;
 
@@ -79,7 +79,7 @@ async function cmdInvite(label, { code: custom } = {}) {
   let code = newCode();
   if (custom !== undefined) {
     const n = normalizeCode(custom).length;
-    if (n < MIN_CUSTOM) die(`a custom code needs at least ${MIN_CUSTOM} letters or digits (spaces, case and punctuation are ignored)`);
+    if (n < MIN_CUSTOM) die(`a custom code needs at least ${MIN_CUSTOM} characters`);
     code = custom;
     if (n < STRONG_CUSTOM) {
       console.warn(

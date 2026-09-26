@@ -20,12 +20,13 @@ sitemap: false
     <form class="ic-lock" id="ic-lock" autocomplete="off">
         <label for="ic-code" data-i18n-zh="邀请码">Invitation code</label>
         <div class="ic-row">
-            <input id="ic-code" name="code" type="text" inputmode="text" autocapitalize="characters"
-                   spellcheck="false" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="40" required>
+            <input id="ic-code" name="code" type="text" inputmode="text" autocapitalize="off" autocorrect="off"
+                   spellcheck="false" maxlength="80" required
+                   aria-describedby="ic-case">
             <button class="btn primary" type="submit" id="ic-submit" data-i18n-zh="解锁">Unlock</button>
         </div>
         <p class="ic-status" id="ic-status" role="status" aria-live="polite" hidden></p>
-        <p class="ic-note" data-i18n-zh="解密在你的浏览器里完成，邀请码不会发送到任何地方。">Decryption happens in your browser. Your code is never sent anywhere.</p>
+        <p class="ic-note" id="ic-case" data-i18n-zh="邀请码区分大小写。解密在你的浏览器里完成，邀请码不会发送到任何地方。">Codes are case-sensitive. Decryption happens in your browser, and your code is never sent anywhere.</p>
     </form>
 
     <div class="ic-open" id="ic-open" hidden>
