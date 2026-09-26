@@ -4,16 +4,25 @@
     <title>{% if page.title %}{{ page.title }} · {{ site.SEOTitle }}{% else %}{{ site.SEOTitle }}{% endif %}</title>
 
     {%- comment -%}
-      Styles and fonts come first so the browser's preload scanner can start
-      fetching them before it parses anything else. Fonts are self-hosted, so
-      there is no third-party DNS lookup or TLS handshake on the critical path.
-      Only the three faces used above the fold are preloaded; the italic and
-      mono cuts load on demand through font-display: swap.
+      Fonts come first so the browser's preload scanner can start fetching
+      them before it parses anything else. Fonts are self-hosted, so there is
+      no third-party DNS lookup or TLS handshake on the critical path. Only the
+      three faces used above the fold are preloaded; the italic and mono cuts
+      load on demand through font-display: swap.
+
+      The whole stylesheet (about 6 KB gzipped) is inlined: GitHub Pages only
+      lets browsers cache it for ten minutes, so a separate file cost most
+      visitors a render-blocking round trip on every visit.
     {%- endcomment -%}
     <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/source-serif-4-400-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/source-serif-4-600-latin.woff2" crossorigin>
     <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/source-sans-3-600-latin.woff2" crossorigin>
-    <link rel="stylesheet" href="{{ site.baseurl }}/css/site.css?v={{ site.asset_version }}">
+    {%- comment -%} Extra faces a page renders above the fold, e.g. the sans tag chips on /blogs/, which reflow when it swaps in. {%- endcomment -%}
+    {%- for font in page.preload_fonts %}
+    <link rel="preload" as="font" type="font/woff2" href="{{ site.baseurl }}/fonts/{{ font }}" crossorigin>
+    {%- endfor %}
+    {%- capture site_scss %}{% include site.scss %}{% endcapture %}
+    <style>{{ site_scss | scssify | strip }}</style>
     {%- if page.preload_image %}
     <link rel="preload" as="image" href="{{ site.baseurl }}{{ page.preload_image }}" fetchpriority="high">
     {%- endif %}

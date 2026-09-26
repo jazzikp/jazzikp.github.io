@@ -55,9 +55,11 @@ Open [http://localhost:4000](http://localhost:4000).
 ## How the front end is put together
 
 **Styles.** Every rule lives in a partial under `_sass/` and is imported by
-`css/site.scss` in cascade order. Jekyll compiles that to a single minified
-`css/site.css`, so a page needs exactly one stylesheet request. Edit the
-partials, never the compiled file.
+`_includes/site.scss` in cascade order. `_includes/head.html` compiles that with
+Jekyll's `scssify` filter and inlines the minified result (about 6 KB gzipped)
+in every page, so first paint never waits on a stylesheet request. Font URLs in
+the partials must be root-relative (`/fonts/…`) because the CSS runs at every
+page depth.
 
 **Fonts** are self-hosted in `fonts/` rather than loaded from Google, which
 keeps the critical path on one origin. To refresh or change them, edit the

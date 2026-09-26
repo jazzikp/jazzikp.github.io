@@ -125,7 +125,7 @@ for (const face of FACES) {
         `  font-style: ${face.style};`,
         `  font-weight: ${face.weight};`,
         "  font-display: swap;",
-        `  src: url("../fonts/${name}") format("woff2");`,
+        `  src: url("/fonts/${name}") format("woff2");`,
         `  unicode-range: ${block.range};`,
         "}",
       ].join("\n")

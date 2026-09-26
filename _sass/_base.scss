@@ -1,4 +1,7 @@
 * { box-sizing: border-box; }
+// Components set display (grid, flex) that would otherwise beat the hidden
+// attribute the blog filters and language panels toggle.
+[hidden] { display: none !important; }
 html, body { margin: 0; padding: 0; }
 html {
   scroll-behavior: smooth;

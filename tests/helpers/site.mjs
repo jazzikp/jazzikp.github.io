@@ -116,6 +116,11 @@ export function tags(html, tag) {
   return [...html.matchAll(new RegExp(`<${tag}\\b[^>]*>`, "gi"))].map((m) => m[0]);
 }
 
+/** The stylesheet head.html inlines into every page, or undefined. */
+export function inlineCss(html) {
+  return html.match(/<style>([\s\S]*?)<\/style>/)?.[1];
+}
+
 export function meta(html, key, kind = "name") {
   const re = new RegExp(
     `<meta[^>]*\\b${kind}="${key}"[^>]*\\bcontent="([^"]*)"|` +

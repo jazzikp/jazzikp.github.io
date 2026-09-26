@@ -36,15 +36,16 @@ highlighter: rouge
 kramdown:
   input: GFM
 
-# One stylesheet, minified. Partials live in _sass/, wired up by css/site.scss.
+# One stylesheet, minified and inlined by _includes/head.html. Partials live in
+# _sass/, wired up by _includes/site.scss.
 sass:
   sass_dir: _sass
   style: compressed
 
-# Appended to css/ and js/ URLs, and names the service worker's caches.
-# Bump it whenever a stylesheet or script changes so returning visitors get the
-# new file instead of a cached one.
-asset_version: 31
+# Appended to js/ URLs, and names the service worker's caches. Bump it whenever
+# a script changes so returning visitors get the new file instead of a cached
+# one; bumping it also clears pages the service worker saved for offline use.
+asset_version: 32
 
 exclude:
   - node_modules

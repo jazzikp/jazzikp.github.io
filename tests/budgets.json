@@ -2,9 +2,10 @@
   "_comment": "Performance budgets, in bytes. These are the numbers the site shipped at, rounded up with a little headroom. If a change pushes past one, that is the signal to optimise rather than to raise the number — and if you do raise it, say why in the PR.",
 
   "criticalPathBytes": 220000,
-  "criticalPathNote": "HTML + stylesheet + preloaded fonts + the LCP image on the home page, uncompressed.",
+  "criticalPathNote": "HTML (which inlines the stylesheet) + preloaded fonts + the LCP image on the home page, uncompressed.",
 
   "stylesheetBytes": 40000,
+  "stylesheetNote": "The compiled stylesheet, inlined in every page's <head> by _includes/head.html. It is subtracted before the per-page maxHtmlBytes check.",
   "renderBlockingScriptBytes": 0,
   "firstLoadScriptBytes": 6000,
   "firstLoadScriptNote": "Only js/site.js runs on every page — theme, nav and the language toggle, which is in the nav and so is needed everywhere. chat.js, comments.js, post.js and blogs.js are all loaded on demand.",

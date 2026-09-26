@@ -135,10 +135,12 @@ describe("browser", () => {
   test("blog search and tag filters narrow the list", async () => {
     const { context, page } = await open("/blogs/");
     const total = await page.locator(".post-card").count();
+    // Count what is on screen, not the attribute: `.post-card { display: grid }`
+    // once overrode [hidden] and the filters changed nothing visible.
 
     await page.fill("#post-search", "stanford");
     await page.waitForTimeout(100);
-    const found = await page.locator(".post-card:not([hidden])").count();
+    const found = await page.locator(".post-card:visible").count();
     assert.ok(found > 0 && found < total, `search matched ${found}/${total}`);
 
     await page.fill("#post-search", "no-such-post-exists");
@@ -148,13 +150,13 @@ describe("browser", () => {
     await page.fill("#post-search", "");
     await page.click('#tag-filters [data-tag="stanford"]');
     await page.waitForTimeout(100);
-    const tagged = await page.locator(".post-card:not([hidden])").count();
+    const tagged = await page.locator(".post-card:visible").count();
     assert.ok(tagged > 0 && tagged < total, `tag filter matched ${tagged}/${total}`);
 
     // Clicking the active tag clears it.
     await page.click('#tag-filters [data-tag="stanford"]');
     await page.waitForTimeout(100);
-    assert.equal(await page.locator(".post-card:not([hidden])").count(), total);
+    assert.equal(await page.locator(".post-card:visible").count(), total);
     await context.close();
   });
 
