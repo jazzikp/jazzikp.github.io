@@ -81,7 +81,7 @@ layout: default
         </div>
         <div class="project-grid home-projects">
             {% assign featured = site.data.projects | where: "featured", true %}
-            {% for p in featured limit: 3 %}
+            {% for p in featured limit: 4 %}
             <a class="project-card" href="{{ p.url }}" {% if p.url contains 'http' %}target="_blank" rel="noopener"{% endif %}>
                 <div class="project-meta">
                     <time>{{ p.year }}</time>

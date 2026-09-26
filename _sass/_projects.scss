@@ -27,6 +27,8 @@
   padding-bottom: 8px;
 }
 .home-projects { padding-bottom: 28px; }
+// An odd card count would leave an empty cell in the two-column grid.
+.home-projects .project-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .project-card {
   display: block;
   text-decoration: none;
