@@ -49,7 +49,8 @@
     for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
     return btoa(bin);
   }
-  function normalize(code) { return String(code).toUpperCase().replace(/[^A-Z0-9]/g, ""); }
+  // Exact, case-sensitive match; mirrors normalizeCode in scripts/private-crypto.mjs.
+  function normalize(code) { return String(code).trim(); }
 
   function unseal(k, box) {
     return subtle.decrypt({ name: "AES-GCM", iv: b64(box.iv) }, k, b64(box.data)).then(function (buf) {

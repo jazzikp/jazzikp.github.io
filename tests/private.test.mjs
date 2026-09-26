@@ -71,7 +71,7 @@ describe("invite-only section", () => {
   test("codes unlock their own bundle and nothing else", async () => {
     const [a, b] = [newCode(), newCode()];
     assert.match(a, /^[A-Z2-9]{4}(-[A-Z2-9]{4}){3}$/);
-    assert.equal(normalizeCode(a.toLowerCase().replace(/-/g, " ")), normalizeCode(a));
+    assert.equal(normalizeCode(`  ${a} `), a, "surrounding whitespace should be ignored");
 
     // Hyphens never occur in base64, so these markers cannot appear by chance.
     const index = { posts: [{ id: "x", slug: "s", title: "title-marker" }] };
@@ -90,12 +90,14 @@ describe("invite-only section", () => {
     assert.equal(await unlock(manifest, newCode()), null, "an unrelated code unlocked the bundle");
   });
 
-  test("a chosen code matches regardless of case, spaces and punctuation", async () => {
+  test("a code matches exactly, case included", async () => {
     const { manifest } = await encryptBundle({ codes: ["jazzikIsChad"], index: { posts: [] }, posts: {}, iterations: 1000 });
-    for (const typed of ["jazzikIsChad", "JAZZIKISCHAD", "jazzik is chad", "jazzik-is-chad"]) {
-      assert.ok(await unlock(manifest, typed), `"${typed}" did not unlock`);
+    for (const typed of ["jazzikIsChad", " jazzikIsChad ", "jazzikIsChad\n"]) {
+      assert.ok(await unlock(manifest, typed), `${JSON.stringify(typed)} did not unlock`);
     }
-    assert.equal(await unlock(manifest, "jazzikIsChad2"), null, "a near miss unlocked the bundle");
+    for (const typed of ["JAZZIKISCHAD", "jazzikischad", "jazzik is chad", "jazzik-is-chad", "JazzikIsChad", "jazzikIsChad2"]) {
+      assert.equal(await unlock(manifest, typed), null, `${JSON.stringify(typed)} unlocked, but only the exact code should`);
+    }
   });
 
   test("the pre-commit hook that blocks leaks ships with the repo", async () => {

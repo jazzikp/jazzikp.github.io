@@ -369,7 +369,12 @@ describe("browser", () => {
     await page.locator("#ic-status.is-error").waitFor({ timeout: 10000 });
     assert.ok(await page.locator("#ic-open").isHidden(), "a wrong code revealed the section");
 
-    await page.fill("#ic-code", "test code aaaa bbbb"); // case and separators are forgiven
+    await page.fill("#ic-code", code.toLowerCase()); // codes are case-sensitive
+    await page.click("#ic-submit");
+    await page.locator("#ic-status.is-error").waitFor({ timeout: 10000 });
+    assert.ok(await page.locator("#ic-open").isHidden(), "a wrongly-cased code revealed the section");
+
+    await page.fill("#ic-code", ` ${code} `); // surrounding spaces from a paste are fine
     await page.click("#ic-submit");
     await page.locator("#ic-list .post-card").waitFor({ timeout: 10000 });
     assert.equal(await page.locator("#ic-list h2").innerText(), "Hello, circle");
