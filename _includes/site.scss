@@ -1,9 +1,5 @@
----
-# Front matter is required so Jekyll compiles this file.
-# Output is minified — see the `sass` block in _config.yml.
----
-
-// Everything the site renders with, compiled into one request.
+// Everything the site renders with. _includes/head.html compiles this with
+// scssify and inlines it in every page, so first paint waits on no request.
 // Partials live in _sass/ and are imported in cascade order: later
 // imports are allowed to override earlier ones.
 

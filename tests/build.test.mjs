@@ -9,7 +9,7 @@ import { test, describe, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { startSite, SITE, PAGES } from "./helpers/site.mjs";
+import { startSite, SITE, PAGES, inlineCss } from "./helpers/site.mjs";
 
 let site;
 before(async () => { site = await startSite(); });
@@ -25,7 +25,6 @@ describe("build output", () => {
 
   test("the generated files the site relies on all exist", async () => {
     const required = [
-      "css/site.css",
       "js/site.js",
       "js/chat.js",
       "js/comments.js",
@@ -47,15 +46,21 @@ describe("build output", () => {
     }
   });
 
-  test("the stylesheet is compiled and minified", async () => {
-    const css = await readFile(join(SITE, "css/site.css"), "utf8");
-    assert.ok(css.includes("@font-face"), "self-hosted fonts are missing from the bundle");
-    assert.ok(css.includes(".highlight"), "syntax highlighting is missing from the bundle");
-    assert.ok(css.includes("--accent"), "design tokens are missing from the bundle");
-    assert.ok(
-      css.split("\n").length <= 3,
-      "css/site.css is not minified — check `sass: style: compressed` in _config.yml"
-    );
+  test("the stylesheet is compiled, minified and inlined on every page", async () => {
+    for (const page of PAGES) {
+      const doc = await (await fetch(site.origin + page)).text();
+      const css = inlineCss(doc);
+      assert.ok(css, `${page} has no inline stylesheet`);
+      assert.ok(!/<link[^>]*rel="stylesheet"/.test(doc), `${page} still links a stylesheet`);
+      assert.ok(css.includes("@font-face"), `${page}: self-hosted fonts are missing from the bundle`);
+      assert.ok(css.includes(".highlight"), `${page}: syntax highlighting is missing from the bundle`);
+      assert.ok(css.includes("--accent"), `${page}: design tokens are missing from the bundle`);
+      assert.ok(!css.includes("../fonts/"), `${page}: font URLs must be root-relative once inlined`);
+      assert.ok(
+        css.split("\n").length <= 3,
+        `${page}: stylesheet is not minified — check \`sass: style: compressed\` in _config.yml`
+      );
+    }
   });
 
   test("Sass partials are not published on their own", async () => {
@@ -79,7 +84,7 @@ describe("build output", () => {
     assert.ok(version, "sw.js has no VERSION — the Liquid front matter may be missing");
 
     const home = await readFile(join(SITE, "index.html"), "utf8");
-    const assetVersion = home.match(/css\/site\.css\?v=(\d+)/)?.[1];
+    const assetVersion = home.match(/js\/site\.js\?v=(\d+)/)?.[1];
     assert.equal(
       version,
       "v" + assetVersion,

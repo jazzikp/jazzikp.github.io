@@ -33,7 +33,6 @@ const OFFLINE = "/offline.html";
 const PRECACHE = [
   OFFLINE,
   "/",
-  "/css/site.css?v={{ site.asset_version }}",
   "/js/site.js?v={{ site.asset_version }}",
   "/fonts/source-serif-4-400-latin.woff2",
   "/fonts/source-serif-4-600-latin.woff2",

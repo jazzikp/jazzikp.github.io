@@ -40,6 +40,11 @@
 }
 .project-card:hover {
   border-color: var(--accent);
+  box-shadow: var(--shadow);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .project-card { transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+  .project-card:hover { transform: translateY(-2px); }
 }
 .project-card:hover h2,
 .project-card:hover h3 { color: var(--accent); }

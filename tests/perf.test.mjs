@@ -8,7 +8,7 @@ import { test, describe, before, after } from "node:test";
 import assert from "node:assert/strict";
 import { readFile, readdir, stat } from "node:fs/promises";
 import { join } from "node:path";
-import { startSite, SITE, PAGES, tags } from "./helpers/site.mjs";
+import { startSite, SITE, PAGES, tags, inlineCss } from "./helpers/site.mjs";
 
 const budgets = JSON.parse(await readFile(new URL("./budgets.json", import.meta.url), "utf8"));
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
@@ -29,10 +29,8 @@ const sizeOf = async (relative) => (await stat(join(SITE, relative))).size;
 describe("performance budgets", () => {
   test("the home page critical path fits its budget", async () => {
     const doc = html.get("/");
-    const parts = [["index.html", Buffer.byteLength(doc)]];
-
-    const css = doc.match(/<link rel="stylesheet" href="([^"?]+)/)?.[1];
-    parts.push([css, await sizeOf(css)]);
+    // The stylesheet is inlined, so the HTML bytes already include it.
+    const parts = [["index.html (with inline CSS)", Buffer.byteLength(doc)]];
 
     for (const [, href] of doc.matchAll(/<link rel="preload" as="font"[^>]*href="([^"]+)"/g)) {
       parts.push([href, await sizeOf(href)]);
@@ -50,9 +48,10 @@ describe("performance budgets", () => {
     );
   });
 
-  test("the stylesheet fits its budget", async () => {
-    const size = await sizeOf("css/site.css");
-    assert.ok(size <= budgets.stylesheetBytes, `css/site.css is ${kb(size)}`);
+  test("the stylesheet fits its budget", () => {
+    const size = Buffer.byteLength(inlineCss(html.get("/")) || "");
+    assert.ok(size > 0, "home page has no inline stylesheet");
+    assert.ok(size <= budgets.stylesheetBytes, `inline stylesheet is ${kb(size)}`);
   });
 
   test("only one script runs on every page, and it is deferred", async () => {
@@ -125,7 +124,12 @@ describe("performance budgets", () => {
       for (const entry of await readdir(join(SITE, dir), { withFileTypes: true })) {
         const rel = join(dir, entry.name);
         if (entry.isDirectory()) { await walk(rel); continue; }
-        const size = (await stat(join(SITE, rel))).size;
+        let size = (await stat(join(SITE, rel))).size;
+        // The inline stylesheet has its own budget; HTML budgets cover content.
+        if (/\.html$/i.test(entry.name)) {
+          const css = inlineCss(await readFile(join(SITE, rel), "utf8"));
+          if (css) size -= Buffer.byteLength(css);
+        }
         const limit = /\.(webp|jpe?g|png|ico)$/i.test(entry.name)
           ? budgets.maxImageBytes
           : /\.woff2$/i.test(entry.name)

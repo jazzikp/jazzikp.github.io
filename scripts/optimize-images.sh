@@ -59,9 +59,10 @@ mkdir -p "$OUT/../pwa/icons"
 png "$SRC/avatar-anime.jpg" 192 pwa/icons/icon-192.png
 png "$SRC/avatar-anime.jpg" 512 pwa/icons/icon-512.png
 
-echo "hero — 280px on the home page, 220px on about, so 800px covers 2x everywhere"
+echo "hero — 280px on the home page (112px on phones), 220px on about, so 800px covers 2x everywhere"
 resize "$SRC/hero-anime.jpg" 800 "$OUT/hero-anime-800.webp" 80
 resize "$SRC/hero-anime.jpg" 400 "$OUT/hero-anime-400.webp" 80
+resize "$SRC/hero-anime.jpg" 240 "$OUT/hero-anime-240.webp" 80
 
 echo "social card — 1200x630 is what X and LinkedIn crop to"
 tmp=$(mktemp -t optimg).png

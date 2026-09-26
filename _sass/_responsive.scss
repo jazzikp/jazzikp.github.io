@@ -23,6 +23,15 @@
     min-width: 150px;
   }
   .nav-links.open { display: flex; }
-  .hero { padding-top: 28px; }
-  .hero-art img { margin: 0; max-width: 200px; }
+  // Portrait leads the hero on phones, small enough that the headline still
+  // sits in the first screen.
+  .hero { padding-top: 24px; gap: 20px; }
+  .hero-art { order: -1; }
+  .hero-art img { margin: 0; max-width: 112px; border-radius: 8px; }
+
+  // The avatar alone is enough of a target on a phone; the label bubble
+  // covered a line of body text at the bottom of every screen.
+  .chat-dock { right: 14px; bottom: 14px; }
+  .chat-hint { display: none; }
+  .chat-launcher { width: 48px; height: 48px; flex-basis: 48px; box-shadow: var(--shadow); }
 }
