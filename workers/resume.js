@@ -8,7 +8,7 @@ xAI — Member of Technical Staff (2025–present)
 - Phoenix ranking model.
 - Grok Coding RL: training Grok to write, debug, and reason about real software.
 
-Snap — Machine Learning Engineer, tech lead, product ads ranking (2023–2025)
+Snap — Head of Ads Ranking (2023–2025)
 - LLM synthetic labels and content understanding for product ads.
 - Multimodal / in-context ads (video frames + CLIP-style retrieval).
 - Delayed-conversion ranking (ESMM-style), calibration, multi-domain CTR work.
