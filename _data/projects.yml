@@ -5,6 +5,13 @@
   url: https://arxiv.org/html/2608.04205v1
   featured: true
 
+- title: FlashInfer deterministic top-k
+  year: "2026"
+  kind: code
+  summary: Made top_k_renorm_probs deterministic in FlashInfer, the GPU kernel library for LLM serving.
+  url: https://github.com/flashinfer-ai/flashinfer/pull/4831
+  featured: false
+
 - title: Difficulty-aware looped transformer
   year: "2025"
   kind: code
