@@ -9,7 +9,7 @@
  */
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
-import { readFile, readdir } from "node:fs/promises";
+import { readFile, readdir, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -88,5 +88,22 @@ describe("invite-only section", () => {
       assert.deepEqual(await decryptJson(key, files.x), post);
     }
     assert.equal(await unlock(manifest, newCode()), null, "an unrelated code unlocked the bundle");
+  });
+
+  test("a chosen code matches regardless of case, spaces and punctuation", async () => {
+    const { manifest } = await encryptBundle({ codes: ["jazzikIsChad"], index: { posts: [] }, posts: {}, iterations: 1000 });
+    for (const typed of ["jazzikIsChad", "JAZZIKISCHAD", "jazzik is chad", "jazzik-is-chad"]) {
+      assert.ok(await unlock(manifest, typed), `"${typed}" did not unlock`);
+    }
+    assert.equal(await unlock(manifest, "jazzikIsChad2"), null, "a near miss unlocked the bundle");
+  });
+
+  test("the pre-commit hook that blocks leaks ships with the repo", async () => {
+    const hook = join(ROOT, ".githooks/pre-commit");
+    assert.ok(existsSync(hook), ".githooks/pre-commit is missing");
+    assert.ok((await stat(hook)).mode & 0o111, ".githooks/pre-commit is not executable");
+    const src = await readFile(hook, "utf8");
+    assert.match(src, /\^private\//, "the hook no longer checks private/");
+    assert.match(src, /secret-life\/data/, "the hook no longer checks the published data");
   });
 });

@@ -3,7 +3,8 @@
  * Invite-only posts: write in private/, publish ciphertext to secret-life/data/.
  *
  *   npm run private -- new "Title"        start a post in private/posts/
- *   npm run private -- invite "Label"     create a code for someone, then republish
+ *   npm run private -- invite "Label"     create a random code for someone, then republish
+ *   npm run private -- invite "Label" --code "your phrase"   use your own code instead
  *   npm run private -- revoke "Label"     delete their code, then republish under a new key
  *   npm run private -- list               show labels and codes
  *   npm run private -- publish            encrypt every post in private/posts/
@@ -19,7 +20,7 @@ import { join, resolve, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
-import { encryptBundle, newCode } from "./private-crypto.mjs";
+import { encryptBundle, newCode, normalizeCode } from "./private-crypto.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = resolve(process.env.PRIVATE_DIR || join(ROOT, "private"));
@@ -66,16 +67,44 @@ async function cmdNew(title) {
   console.log(`created ${relative(ROOT, file)}`);
 }
 
-async function cmdInvite(label) {
-  if (!label) die('usage: npm run private -- invite "Label"');
+// Codes are matched ignoring case, spaces and punctuation (see normalizeCode).
+const MIN_CUSTOM = 8;
+const STRONG_CUSTOM = 20;
+
+async function cmdInvite(label, { code: custom } = {}) {
+  if (!label) die('usage: npm run private -- invite "Label" [--code "your phrase"]');
   assertPrivateDirIsIgnored();
   const codes = await readCodes();
   if (codes.some((c) => c.label === label)) die(`"${label}" already has a code (see \`list\`)`);
-  const code = newCode();
+  let code = newCode();
+  if (custom !== undefined) {
+    const n = normalizeCode(custom).length;
+    if (n < MIN_CUSTOM) die(`a custom code needs at least ${MIN_CUSTOM} letters or digits (spaces, case and punctuation are ignored)`);
+    code = custom;
+    if (n < STRONG_CUSTOM) {
+      console.warn(
+        `warning: "${custom}" is a chosen phrase, not a random code. The encrypted files are public,\n` +
+          `so anyone can download them and try guesses offline; a phrase that could appear in a\n` +
+          `wordlist or be guessed from your name can be cracked. Prefer ${STRONG_CUSTOM}+ characters of\n` +
+          `unrelated words, or omit --code for a random one.`
+      );
+    }
+  }
+  if (codes.some((c) => normalizeCode(c.code) === normalizeCode(code))) die("that code is already in use");
   codes.push({ label, code, created: new Date().toISOString().slice(0, 10) });
   await writeCodes(codes);
   console.log(`invitation code for ${label}: ${code}`);
-  await cmdPublish();
+  await publishIfAnything();
+}
+
+// Nothing to encrypt yet: keep the codes, publish with the first post.
+async function publishIfAnything() {
+  if ((await postFiles()).length || existsSync(OUT)) return cmdPublish();
+  console.log("no posts yet, so nothing was published; run `publish` after writing one");
+}
+
+async function postFiles() {
+  return existsSync(POSTS) ? (await readdir(POSTS)).filter((f) => f.endsWith(".md")).sort() : [];
 }
 
 async function cmdRevoke(label) {
@@ -86,7 +115,7 @@ async function cmdRevoke(label) {
   if (kept.length === codes.length) die(`no code labelled "${label}"`);
   await writeCodes(kept);
   console.log(`revoked ${label}`);
-  if (kept.length) await cmdPublish();
+  if (kept.length) await publishIfAnything();
   else {
     await rm(OUT, { recursive: true, force: true });
     console.log(`no codes left; removed ${relative(ROOT, OUT)}/`);
@@ -125,7 +154,7 @@ async function cmdPublish() {
   const codes = await readCodes();
   if (!codes.length) die('no invitation codes yet — create one with `npm run private -- invite "Name"`');
 
-  const names = existsSync(POSTS) ? (await readdir(POSTS)).filter((f) => f.endsWith(".md")).sort() : [];
+  const names = await postFiles();
   const rendered = render(await Promise.all(names.map((f) => readFile(join(POSTS, f), "utf8"))));
 
   const index = { published: new Date().toISOString(), posts: [] };
@@ -151,7 +180,15 @@ async function cmdPublish() {
 }
 
 const [command, ...rest] = process.argv.slice(2);
-const arg = rest.join(" ").trim();
+const flags = {};
+const words = [];
+for (let i = 0; i < rest.length; i++) {
+  if (rest[i] === "--code") {
+    if (i + 1 >= rest.length) die("--code needs a value");
+    flags.code = rest[++i];
+  } else words.push(rest[i]);
+}
+const arg = words.join(" ").trim();
 const commands = { new: cmdNew, invite: cmdInvite, revoke: cmdRevoke, list: cmdList, publish: cmdPublish };
 if (!commands[command]) die(`unknown command "${command || ""}". Use one of: ${Object.keys(commands).join(", ")}`);
-await commands[command](arg);
+await commands[command](arg, flags);

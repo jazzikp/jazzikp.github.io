@@ -15,9 +15,10 @@
  * and padded with random decoys so the file does not reveal who holds which
  * code or exactly how many codes there are.
  *
- * Codes carry about 78 random bits, which is what actually protects the posts: the
- * ciphertext is public, so a guessable code could be brute-forced offline no
- * matter how many PBKDF2 iterations it costs.
+ * Generated codes carry about 78 random bits. That, not PBKDF2, is what
+ * protects the posts: the ciphertext is public, so a guessable code can be
+ * brute-forced offline however many iterations each guess costs. The author
+ * may still choose a phrase (`invite --code`); the CLI warns when it is short.
  */
 import { webcrypto } from "node:crypto";
 
